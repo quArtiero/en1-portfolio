@@ -75,6 +75,7 @@ body {
 /* ************************** */
 
 .home {
+    position: relative;   /* the hero drawing is positioned inside it */
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -149,6 +150,104 @@ body {
     width: 22px;
     height: 22px;
     fill: currentColor;
+}
+
+/* ******************************************** */
+/* Hero drawing: the float, its line, the ripples */
+/* ******************************************** */
+
+.hero-float {
+    display: none;   /* shown at 900px and wider, see below */
+}
+
+@media (min-width: 900px) {
+    .home-content {
+        max-width: min(600px, 100% - 280px);   /* leave the drawing its own room */
+    }
+
+    .hero-float {
+        display: block;
+        position: absolute;
+        top: 12%;
+        bottom: 14%;
+        right: 8%;
+        width: clamp(180px, 18vw, 260px);
+        pointer-events: none;
+    }
+
+    .hero-float svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+    }
+}
+
+.float-line {
+    stroke: var(--color-text-muted);
+    stroke-width: 1;
+    opacity: 0.7;
+}
+
+.float-antenna,
+.float-cap {
+    fill: var(--color-float);   /* the only use of the float color on the site */
+}
+
+.float-body {
+    fill: var(--color-text);
+}
+
+.float-submerged {
+    fill: var(--surface-water);   /* tints the part of the float under the waterline */
+    opacity: 0.55;
+}
+
+.ripple {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 1;
+    opacity: 0.35;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.ripple-2 {
+    opacity: 0.2;
+}
+
+/* Idle: the float bobs slowly and the ripples spread out and fade. */
+@keyframes bob {
+    from { transform: translateY(-4px); }
+    to   { transform: translateY(4px); }
+}
+
+@keyframes ripple {
+    from { transform: scale(0.8);  opacity: 0.4; }
+    to   { transform: scale(1.25); opacity: 0; }
+}
+
+.float-bob {
+    animation: bob 3.6s ease-in-out infinite alternate;
+}
+
+.ripple-1 {
+    animation: ripple 3.6s ease-out infinite;
+}
+
+.ripple-2 {
+    animation: ripple 3.6s ease-out 1.8s infinite;
+}
+
+/* The float dips once when the button is hovered or focused. */
+@keyframes dip {
+    0%   { transform: translateY(0); }
+    45%  { transform: translateY(12px); }
+    100% { transform: translateY(0); }
+}
+
+.home:has(.cta:hover) .float-dip,
+.home:has(.cta:focus-visible) .float-dip {
+    animation: dip 0.4s var(--ease-out);
 }
 
 /* ************************************* */
@@ -288,9 +387,14 @@ body {
     }
 }
 
-/* Reduced motion: no scroll-linked reveal. The short hover transitions stay. */
+/* Reduced motion: no scroll-linked reveal, no bobbing float or ripple loop, */
+/* no dip. The short hover transitions stay.                                 */
 @media (prefers-reduced-motion: reduce) {
-    .project-card {
+    .project-card,
+    .float-bob,
+    .float-dip,
+    .ripple-1,
+    .ripple-2 {
         animation: none;
     }
 }

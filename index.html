@@ -53,6 +53,30 @@
                 </div>
             </div>
         </div>
+
+        <!-- Hero drawing: a fishing float on its line, with two ripples. Purely      -->
+        <!-- decorative. It stands in for a future 3D scene (see docs/spline-scene-   -->
+        <!-- brief.md). Colors come from index.css so theme.css stays the only place  -->
+        <!-- colors are defined. Shown at 900px and wider.                            -->
+        <div class="hero-float" aria-hidden="true">
+            <svg viewBox="0 0 240 520" preserveAspectRatio="xMidYMid meet" focusable="false">
+                <defs>
+                    <clipPath id="float-above-water"><rect x="0" y="0" width="240" height="400"/></clipPath>
+                    <clipPath id="float-below-water"><rect x="0" y="400" width="240" height="120"/></clipPath>
+                </defs>
+                <g class="float-bob">
+                    <line class="float-line" x1="120" y1="0" x2="120" y2="318"/>
+                    <g class="float-dip">
+                        <rect class="float-antenna" x="118.25" y="318" width="3.5" height="48" rx="1.75"/>
+                        <ellipse class="float-body" cx="120" cy="400" rx="15" ry="38"/>
+                        <ellipse class="float-cap" cx="120" cy="400" rx="15" ry="38" clip-path="url(#float-above-water)"/>
+                        <ellipse class="float-submerged" cx="120" cy="400" rx="15" ry="38" clip-path="url(#float-below-water)"/>
+                    </g>
+                </g>
+                <ellipse class="ripple ripple-1" cx="120" cy="400" rx="36" ry="8"/>
+                <ellipse class="ripple ripple-2" cx="120" cy="400" rx="62" ry="14"/>
+            </svg>
+        </div>
     </section>
 
     <!-- Portfolio Section -->
