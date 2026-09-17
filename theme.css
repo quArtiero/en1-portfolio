@@ -1,38 +1,224 @@
 /* ============================================================ */
-/* Site theme — shared colors, fonts, and sizes                 */
+/* Site theme — tokens and shared base styles                     */
 /*                                                                */
-/* Both index.css and project.css import this file, so changing */
-/* a value here updates the whole site at once. To re-theme the  */
-/* site (new colors, new font), edit the variables below only —  */
-/* don't hardcode new colors directly in index.css/project.css.  */
+/* Both index.css and project.css import this file.              */
+/*                                                                */
+/* Part 1 (:root) is the set of "knobs": every color, font, and   */
+/* size the site uses. To re-theme the site, change values here  */
+/* only — don't hardcode new colors in index.css/project.css.    */
+/*                                                                */
+/* Part 2 is the shared base every page gets: the water-column   */
+/* background, typography, focus rings, and the reduced-motion    */
+/* switch. Page-specific layout stays in index.css/project.css.  */
 /* ============================================================ */
 
+/* --depth is one number: 0 at the top of the page, 1 at the      */
+/* bottom. The background color, the dawn light, and the scroll   */
+/* line all read it. Registering it lets CSS animate it smoothly. */
+@property --depth {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+}
+
 :root {
-    /* Brand colors */
-    --color-primary: #4a7a6e;       /* deep teal-green: headers, nav, links */
-    --color-primary-dark: #35594f;  /* darker teal: hover/active states */
-    --color-accent: #e0a66a;        /* warm orange: cards, highlights */
-    --color-accent-dark: #c98a49;   /* darker orange: hover states */
+    color-scheme: dark;
+    --depth: 0;   /* plain starting value, for browsers that don't know @property */
 
-    /* Text */
-    --color-text: #2d2420;          /* main body text */
-    --color-text-muted: #4d3a2c;    /* secondary text, links on light bg */
-    --color-text-on-dark: #ffffff;  /* text placed over photos/dark overlays */
+    /* Palette — the water column, surface to bottom */
+    --surface-water: #12394A;   /* top of the page, dawn */
+    --mid-water: #0E2C38;       /* cards and containers */
+    --deep-water: #071A22;      /* bottom of the page */
+    --fog: #E6EFEC;             /* main text */
+    --mist: #9DB4B5;            /* secondary text, labels, the scroll line */
+    --lure: #D7F24B;            /* accent: links, focus rings, primary button ONLY */
+    --float: #F0492E;           /* the float in the hero drawing ONLY, never text */
 
-    /* Backgrounds */
-    --color-bg-page: #f4f4f4;       /* page background on activity/project pages */
-    --color-bg-card: #ffffff;       /* white card/container background */
-    --color-bg-overlay: rgba(74, 122, 110, 0.5); /* translucent header/hero overlay */
-    --color-bg-header: rgba(250, 250, 250, 0.9); /* near-white bar behind the nav on activity/project pages */
+    /* Semantic tokens — the palette mapped to jobs. The CSS files use these. */
+    --color-text: var(--fog);
+    --color-text-muted: var(--mist);
+    --color-accent: var(--lure);
+    --color-float: var(--float);
+    --color-bg-page: var(--deep-water);
+    --color-bg-card: var(--mid-water);
+    --color-bg-header: color-mix(in oklab, var(--deep-water) 85%, transparent);
+    --color-line: color-mix(in oklab, var(--fog) 12%, transparent);   /* hairline borders */
+    --color-code-bg: var(--deep-water);
+    --color-code-text: var(--fog);
 
-    /* Code samples */
-    --color-code-bg: #000000;       /* code sample background */
-    --color-code-text: #ffffff;     /* code sample text */
+    /* Typography. The fonts are loaded from Google Fonts in each page's */
+    /* <head>; the names after the comma are fallbacks if that fails.    */
+    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+    --font-body: "Hanken Grotesk", Helvetica, Arial, sans-serif;
+    --font-mono: "JetBrains Mono", Menlo, Consolas, monospace;
 
-    /* Typography */
-    --font-body: Arial, Helvetica, sans-serif;
+    /* Motion */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-ui: 240ms;       /* hovers and small state changes */
+    --dur-reveal: 600ms;   /* things appearing as you scroll */
 
     /* Shape */
     --radius: 10px;
     --container-max: 800px;
+}
+
+/* ============================================================ */
+/* Part 2: shared base styles                                     */
+/* ============================================================ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    /* The page color sinks from surface to deep as --depth goes 0 → 1. */
+    background-color: var(--color-bg-page);   /* plain fallback for very old browsers */
+    background-color: color-mix(in oklab, var(--surface-water), var(--deep-water) calc(var(--depth) * 100%));
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    line-height: 1.6;
+}
+
+/* Drive --depth from the scroll position, in browsers that can do it in  */
+/* pure CSS. Older browsers skip this block and site.js does the same job. */
+@keyframes descend {
+    from { --depth: 0; }
+    to   { --depth: 1; }
+}
+
+@supports (animation-timeline: scroll()) {
+    html {   /* on the root, so every element and pseudo-element below inherits the value */
+        animation: descend linear both;
+        animation-timeline: scroll(root);
+    }
+}
+
+/* Background layer 1: a soft dawn light at the top that fades as you descend. */
+html::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(60% 45% at 50% 0%, color-mix(in oklab, var(--fog) 12%, transparent), transparent);
+    opacity: calc(1 - var(--depth));
+}
+
+/* Background layer 2: lake-chart contour lines, drifting very slowly.    */
+/* The SVG is used as a mask: it supplies the shapes, --fog the color.    */
+html::after {
+    content: "";
+    position: fixed;
+    inset: -10px;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--fog);
+    opacity: 0.08;
+    -webkit-mask: url("./images/contours.svg") center / cover no-repeat;
+    mask: url("./images/contours.svg") center / cover no-repeat;
+    animation: drift 60s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(8px, -6px); }
+}
+
+/* The signature: a 1px line down the right edge that lengthens as you  */
+/* scroll, ending in a lure. Desktop only. Purely decorative — it is     */
+/* drawn with empty pseudo-elements, so screen readers never see it.    */
+@media (min-width: 1024px) {
+    body::before {   /* the line */
+        content: "";
+        position: fixed;
+        top: 0;
+        right: 32px;
+        width: 1px;
+        height: 100vh;
+        z-index: 900;
+        pointer-events: none;
+        background: var(--mist);
+        transform-origin: top;
+        transform: scaleY(var(--depth));
+    }
+
+    body::after {    /* the lure at the tip of the line */
+        content: "";
+        position: fixed;
+        top: 0;
+        right: 25.5px;   /* centers the 14px glyph on the 1px line */
+        width: 14px;
+        height: 14px;
+        z-index: 900;
+        pointer-events: none;
+        background: var(--lure);
+        -webkit-mask: url("./images/lure.svg") center / contain no-repeat;
+        mask: url("./images/lure.svg") center / contain no-repeat;
+        transform: translateY(calc(var(--depth) * (100vh - 14px)));
+    }
+}
+
+/* Typography */
+h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+h1 {
+    line-height: 1;
+    letter-spacing: -0.01em;
+}
+
+h2 {
+    line-height: 1.15;
+}
+
+/* Links in running text. :where() keeps this rule easy to override, */
+/* so nav links and cards can pick their own colors.                 */
+:where(a[href]) {
+    color: var(--color-accent);
+    text-underline-offset: 0.15em;
+}
+
+/* Keyboard focus ring, on everything focusable */
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+/* Depth markers, e.g. "00 M — SURFACE": small mono caps above a section. */
+.depth-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+/* Reduced motion: no loops, no scroll-linked effects. The page holds  */
+/* still at mid-depth. Keep this block last so it wins over the above. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    :root {
+        --depth: 0.5;
+    }
+
+    html {
+        animation: none;
+    }
+
+    html::after {
+        animation: none;
+    }
+
+    body::before,
+    body::after {
+        display: none;
+    }
 }

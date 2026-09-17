@@ -1,8 +1,6 @@
 @import url("./theme.css");
 
 body {
-    background-color: var(--color-primary);
-    font-family: var(--font-body);
     margin: 20px;
 }
 
@@ -16,20 +14,22 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: 75%;
-    background: var(--color-bg-overlay);
+    background: var(--color-bg-header);
+    border: 1px solid var(--color-line);
     z-index: 1000;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    color: var(--color-text-on-dark);
+    color: var(--color-text);
     border-radius: var(--radius);
 }
 
 .header .name {
     text-align: left;
     font-size: 1.5em;
+    font-family: var(--font-display);
 }
 
 .header .navbar {
@@ -40,8 +40,13 @@ body {
 
 .header .navbar a {
     text-decoration: none;
-    color: var(--color-text-on-dark);
+    color: var(--color-text);
     padding: 10px;
+    transition: color var(--dur-ui) var(--ease-out);
+}
+
+.header .navbar a:hover {
+    color: var(--color-accent);
 }
 
 /* ************************** */
@@ -53,8 +58,6 @@ body {
     display: flex;
     align-items: center;
     padding: 6rem 10% 2rem;
-    color: var(--color-text-on-dark);
-    background: url("./images/header.jpg") center / cover no-repeat;
 }
 
 .home-content {
@@ -62,41 +65,29 @@ body {
 }
 
 .home-content h1 {
-    position: relative;
-    font-size: 56px;
-    font-weight: 700;
-    line-height: 1.2;
-    background: var(--color-bg-overlay);
-    padding: 5px;
-    border-radius: var(--radius);
+    font-size: clamp(2.75rem, 7vw, 6rem);
 }
 
 .home-content p {
-    position: relative;
-    font-size: 1.5em;
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
     margin: 20px 0 40px;
-    background: var(--color-bg-overlay);
-    padding: 5px;
-    border-radius: var(--radius);
 }
 
 .socials {
-    position: relative;
     display: flex;
     gap: 20px;
     width: fit-content;
-    background: var(--color-bg-overlay);
-    padding: 10px 15px;
-    border-radius: var(--radius);
 }
 
 .social-link {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--color-text-on-dark);
+    color: var(--color-text);
     text-decoration: none;
     font-size: 1.1em;
+    transition: color var(--dur-ui) var(--ease-out);
 }
 
 .social-link:hover {
@@ -115,6 +106,7 @@ body {
 
 .portfolio {
     padding-block: 5rem 2rem;
+    scroll-margin-top: 3rem;   /* so the "Portfolio" nav link lands below the fixed header */
     max-width: 100%;
     margin-inline: 1.5rem;
 
@@ -127,13 +119,15 @@ body {
 .project-card {
     padding: 5px;
     margin: 5px;
-    background-color: var(--color-accent);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-line);
     border-radius: var(--radius);
     text-align: center;
 }
 
 .project-link {
-    color: var(--color-text-muted);
+    color: var(--color-text);
+    text-decoration: none;
 }
 
 .project-title {
@@ -141,6 +135,7 @@ body {
 }
 
 .project-desc {
+    color: var(--color-text-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -163,10 +158,6 @@ body {
 @media (max-width: 900px) {
     .portfolio {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    .home-content h1 {
-        font-size: 40px;
     }
 }
 
@@ -193,12 +184,8 @@ body {
         padding: 7rem 6% 2rem;
     }
 
-    .home-content h1 {
-        font-size: 30px;
-    }
-
     .home-content p {
-        font-size: 1.1em;
+        font-size: 1.1rem;
     }
 
     .social-link {

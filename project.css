@@ -1,8 +1,6 @@
 @import url("./theme.css");
 
 body {
-    background-color: var(--color-bg-page);
-    font-family: var(--font-body);
     margin: 20px;
 }
 
@@ -18,12 +16,13 @@ body {
     width: 75%;
     max-width: var(--container-max);
     background: var(--color-bg-header);
+    border: 1px solid var(--color-line);
     z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px;
-    color: var(--color-primary);
+    color: var(--color-text);
     border-radius: var(--radius);
 }
 
@@ -40,8 +39,13 @@ body {
 
 .header .navbar a {
     text-decoration: none;
-    color: var(--color-primary);
+    color: var(--color-text);
     padding: 10px;
+    transition: color var(--dur-ui) var(--ease-out);
+}
+
+.header .navbar a:hover {
+    color: var(--color-accent);
 }
 
 /* *********************************** */
@@ -51,15 +55,16 @@ body {
 .proj-container {
     max-width: var(--container-max);
     margin: auto;
-    margin-top: 90px;
+    margin-top: 110px;   /* clears the fixed header (20px from the top + its height) */
     background: var(--color-bg-card);
+    border: 1px solid var(--color-line);
     padding: 20px;
     border-radius: var(--radius);
 }
 
 .proj-header {
     text-align: center;
-    color: var(--color-primary);
+    color: var(--color-text);
 }
 
 .proj-img-container {
@@ -80,6 +85,7 @@ body {
 
 .proj-desc p {
     color: var(--color-text);
+    max-width: 68ch;
 }
 
 /* Optional block: a labeled code sample. Delete this block on pages   */
@@ -92,8 +98,11 @@ body {
 pre:has(code) {
     background-color: var(--color-code-bg);
     color: var(--color-code-text);
+    border: 1px solid var(--color-line);
     border-radius: calc(var(--radius) - 2px);
     padding: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
 }
 pre code {
     white-space: pre-wrap;
@@ -157,7 +166,7 @@ pre code {
     }
 
     .proj-container {
-        margin-top: 80px;
+        margin-top: 96px;
         padding: 14px;
     }
 
