@@ -38,14 +38,35 @@ body {
 }
 
 .header .navbar a {
+    position: relative;
     text-decoration: none;
     color: var(--color-text);
     padding: 10px;
     transition: color var(--dur-ui) var(--ease-out);
 }
 
-.header .navbar a:hover {
+/* A thin underline draws in from the left on hover or keyboard focus */
+.header .navbar a::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 6px;
+    height: 1px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-ui) var(--ease-out);
+}
+
+.header .navbar a:hover,
+.header .navbar a:focus-visible {
     color: var(--color-accent);
+}
+
+.header .navbar a:hover::after,
+.header .navbar a:focus-visible::after {
+    transform: scaleX(1);
 }
 
 /* *********************************** */
@@ -58,28 +79,32 @@ body {
     margin-top: 110px;   /* clears the fixed header (20px from the top + its height) */
     background: var(--color-bg-card);
     border: 1px solid var(--color-line);
-    padding: 20px;
+    padding: 28px;
     border-radius: var(--radius);
 }
 
+.proj-container .depth-label {
+    margin: 0 0 0.75rem;
+}
+
 .proj-header {
-    text-align: center;
-    color: var(--color-text);
+    font-size: clamp(1.9rem, 1.3rem + 2.5vw, 3rem);
+    margin: 0 0 1.25rem;
 }
 
 .proj-img-container {
-    text-align: center;
-    margin: 20px 0;
+    margin: 0 0 1.5rem;
 }
 
 .proj-img-container img {
+    display: block;
     max-width: 100%;
     height: auto;
+    margin: 0 auto;
     border-radius: var(--radius);
 }
 
 .proj-desc {
-    margin: 20px 0;
     line-height: 1.6;
 }
 
@@ -88,11 +113,16 @@ body {
     max-width: 68ch;
 }
 
+/* The optional blocks' headings (e.g. "Code:") reuse the .depth-label */
+/* mono style from theme.css; this only sets their spacing.            */
+.proj-code .depth-label {
+    margin: 0 0 0.5rem;
+}
+
 /* Optional block: a labeled code sample. Delete this block on pages   */
 /* that don't involve code (e.g. a build or design activity).          */
 .proj-code {
-    max-width: 700px;
-    margin: auto;
+    margin: 20px 0;
 }
 
 pre:has(code) {
@@ -167,11 +197,7 @@ pre code {
 
     .proj-container {
         margin-top: 96px;
-        padding: 14px;
-    }
-
-    .proj-header {
-        font-size: 1.3em;
+        padding: 16px;
     }
 
     .proj-gallery img {

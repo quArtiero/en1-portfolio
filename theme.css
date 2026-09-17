@@ -43,6 +43,7 @@
     --color-bg-card: var(--mid-water);
     --color-bg-header: color-mix(in oklab, var(--deep-water) 85%, transparent);
     --color-line: color-mix(in oklab, var(--fog) 12%, transparent);   /* hairline borders */
+    --color-line-strong: color-mix(in oklab, var(--fog) 24%, transparent);   /* hairline on hover */
     --color-code-bg: var(--deep-water);
     --color-code-text: var(--fog);
 
@@ -55,7 +56,6 @@
     /* Motion */
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --dur-ui: 240ms;       /* hovers and small state changes */
-    --dur-reveal: 600ms;   /* things appearing as you scroll */
 
     /* Shape */
     --radius: 10px;

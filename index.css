@@ -39,14 +39,35 @@ body {
 }
 
 .header .navbar a {
+    position: relative;
     text-decoration: none;
     color: var(--color-text);
     padding: 10px;
     transition: color var(--dur-ui) var(--ease-out);
 }
 
-.header .navbar a:hover {
+/* A thin underline draws in from the left on hover or keyboard focus */
+.header .navbar a::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 6px;
+    height: 1px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-ui) var(--ease-out);
+}
+
+.header .navbar a:hover,
+.header .navbar a:focus-visible {
     color: var(--color-accent);
+}
+
+.header .navbar a:hover::after,
+.header .navbar a:focus-visible::after {
+    transform: scaleX(1);
 }
 
 /* ************************** */
@@ -64,20 +85,49 @@ body {
     max-width: 600px;
 }
 
-.home-content h1 {
-    font-size: clamp(2.75rem, 7vw, 6rem);
+.home-content .depth-label {
+    margin: 0 0 1.25rem;
 }
 
-.home-content p {
+.home-content h1 {
+    font-size: clamp(2.75rem, 7vw, 6rem);
+    margin: 0 0 0.5em;
+}
+
+.home-intro {
     font-size: 1.25rem;
     color: var(--color-text-muted);
-    margin: 20px 0 40px;
+    max-width: 68ch;
+    margin: 0 0 2.25rem;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 32px;
+}
+
+/* The one primary button on the site */
+.cta {
+    display: inline-block;
+    padding: 0.75em 1.25em;
+    background: var(--color-accent);
+    color: var(--color-bg-page);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: transform var(--dur-ui) var(--ease-out);
+}
+
+.cta:hover,
+.cta:focus-visible {
+    transform: translateY(-2px);
 }
 
 .socials {
     display: flex;
     gap: 20px;
-    width: fit-content;
 }
 
 .social-link {
@@ -90,7 +140,8 @@ body {
     transition: color var(--dur-ui) var(--ease-out);
 }
 
-.social-link:hover {
+.social-link:hover,
+.social-link:focus-visible {
     color: var(--color-accent);
 }
 
@@ -116,26 +167,60 @@ body {
     justify-items: stretch;
 }
 
+.portfolio-label {
+    grid-column: 1 / -1;   /* the depth marker spans the whole row above the cards */
+    margin: 0 5px;
+}
+
 .project-card {
-    padding: 5px;
+    padding: 14px;
     margin: 5px;
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-line);
     border-radius: var(--radius);
-    text-align: center;
+    transition: transform var(--dur-ui) var(--ease-out),
+                border-color var(--dur-ui) var(--ease-out);
+}
+
+/* Buoyancy: a card rises slightly under the pointer or keyboard focus */
+.project-card:hover,
+.project-card:focus-within {
+    transform: translateY(-3px);
+    border-color: var(--color-line-strong);
+}
+
+/* Cards surface into view as you scroll down to them. Browsers without */
+/* scroll-driven animations skip this block and simply show the cards.   */
+/* This animates `translate` (not `transform`) on purpose: the hover    */
+/* lift above uses `transform`, and the two must not overwrite each     */
+/* other.                                                                */
+@keyframes surface {
+    from { opacity: 0; translate: 0 18px; }
+    to   { opacity: 1; translate: 0 0; }
+}
+
+@supports (animation-timeline: view()) {
+    .project-card {
+        animation: surface var(--ease-out) both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 35%;
+    }
 }
 
 .project-link {
+    display: block;
     color: var(--color-text);
     text-decoration: none;
 }
 
 .project-title {
-    font-size: 1.5em;
+    font-size: 1.35rem;
+    margin: 0 0 0.35rem;
 }
 
 .project-desc {
     color: var(--color-text-muted);
+    margin: 0 0 0.9rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -184,7 +269,7 @@ body {
         padding: 7rem 6% 2rem;
     }
 
-    .home-content p {
+    .home-intro {
         font-size: 1.1rem;
     }
 
@@ -200,5 +285,12 @@ body {
     .portfolio {
         grid-template-columns: 1fr;
         margin-inline: 0.5rem;
+    }
+}
+
+/* Reduced motion: no scroll-linked reveal. The short hover transitions stay. */
+@media (prefers-reduced-motion: reduce) {
+    .project-card {
+        animation: none;
     }
 }
