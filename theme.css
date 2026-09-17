@@ -23,6 +23,11 @@
     --color-bg-page: #f4f4f4;       /* page background on activity/project pages */
     --color-bg-card: #ffffff;       /* white card/container background */
     --color-bg-overlay: rgba(74, 122, 110, 0.5); /* translucent header/hero overlay */
+    --color-bg-header: rgba(250, 250, 250, 0.9); /* near-white bar behind the nav on activity/project pages */
+
+    /* Code samples */
+    --color-code-bg: #000000;       /* code sample background */
+    --color-code-text: #ffffff;     /* code sample text */
 
     /* Typography */
     --font-body: Arial, Helvetica, sans-serif;

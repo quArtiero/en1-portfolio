@@ -54,6 +54,7 @@ body {
     align-items: center;
     padding: 6rem 10% 2rem;
     color: var(--color-text-on-dark);
+    background: url("./images/header.jpg") center / cover no-repeat;
 }
 
 .home-content {
