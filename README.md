@@ -108,7 +108,8 @@ Things to personalize:
 - [ ] Your name, replacing `FIRSTNAME LASTNAME` everywhere it appears.
 - [ ] Your own photos on each activity/project page (`images/header.jpg` is
       only the placeholder that new pages start with).
-- [ ] Your LinkedIn and GitHub links in `index.html`'s social box.
+- [ ] Your LinkedIn and GitHub links in `index.html` — they appear twice, in
+      the social box at the top and in the title block at the bottom.
 - [ ] Confirm you have the rights to publish any images you use — swap out
       any placeholder/stock images that aren't yours.
 
@@ -200,14 +201,14 @@ instructor, or a recruiter.
 ## How the site is organized
 
 ```
-index.html          Home page — intro + a grid of cards, one per activity/project
+index.html          Home page — intro, the grid of cards, and the title block at the end
 index.css           Styles just for the home page (hero, the float drawing, cards)
 project.css         Shared styles for every activity/project detail page
 theme.css           The design "knobs" (colors, sizes, font names) plus the shared
                     water-column background every page gets; the fonts themselves
                     load from the Google Fonts line in each page's <head>
-site.js             The only script: a small fallback so the background still
-                    follows scroll in browsers without CSS scroll-driven animations
+site.js             The only script: a fallback so the background follows scroll in
+                    older browsers, plus the tap ripples in the home-page hero
 template.html       Starting point for a new activity or project page
 activityNN.html     One in-class activity's page (e.g. activity01.html)
 projectNN.html      One project's page (e.g. project01.html)

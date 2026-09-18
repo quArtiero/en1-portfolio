@@ -97,10 +97,11 @@ Do not add a build step.
 
 Avoid adding JavaScript unless the student explicitly requests functionality
 that genuinely requires it. Prefer an HTML/CSS solution when one exists.
-The site already has exactly one script, `site.js`: a small fallback that
-keeps the scrolling background in sync on browsers without CSS scroll-driven
-animations. Do not add more JavaScript unless the student explicitly asks for
-something that needs it.
+The site already has exactly one script, `site.js`, in two small parts: a
+fallback that keeps the scrolling background in sync on browsers without CSS
+scroll-driven animations, and the tap ripples in the home-page hero. Do not
+add more JavaScript unless the student explicitly asks for something that
+needs it.
 
 The three Google Fonts `<link>` lines in every page's `<head>` are the one
 intended external dependency; keep them identical on every page (the fallback
@@ -118,14 +119,16 @@ what is happening.
 
 ```text
 index.html          Home page: intro + grid of cards linking to every page
-index.css           Styles for index.html only (hero, float drawing, cards)
+index.css           Styles for index.html only (hero, float drawing, tap
+                    rings, cards, title block)
 project.css         Shared styles for every activity/project detail page
 theme.css           Design tokens (colors, fonts, sizes) AND the shared base
                     every page gets: the water-column background, the
                     scroll-progress line, typography, focus rings, and the
                     reduced-motion switch. Imported by both CSS files.
 site.js             The only script: fallback that sets --depth from scroll
-                    on browsers without CSS scroll-driven animations
+                    on browsers without CSS scroll-driven animations, plus
+                    the home-page tap ripples
 template.html       Copy this to start a new activity or project page
 activityNN.html     One in-class activity's detail page (NN = 01, 02, ...)
 projectNN.html      One project's detail page (NN = 01, 02, ...)
@@ -201,7 +204,8 @@ When the student asks to add a new activity or project:
    - link to the new page
    - title
    - short one-line description
-   - appropriate image
+   - appropriate image, wrapped in `<span class="project-frame">` exactly
+     like the existing cards (copying an existing card verbatim is safest)
 
    Add the card in chronological order relative to the existing cards.
 
@@ -311,7 +315,8 @@ an appropriate iframe title.
 ## Social links
 
 `index.html` contains a `.socials` box in the home section for links such as
-LinkedIn and GitHub.
+LinkedIn and GitHub. The same two links are repeated in the `.title-block`
+footer at the bottom of the page; keep both copies in sync.
 
 Icons are inline SVGs. `.social-link svg` in `index.css` sets
 `fill: currentColor`, so the icons inherit the link's color from the theme

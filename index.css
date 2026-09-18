@@ -75,7 +75,8 @@ body {
 /* ************************** */
 
 .home {
-    position: relative;   /* the hero drawing is positioned inside it */
+    position: relative;   /* the hero drawing and the tap rings are positioned inside it */
+    overflow: clip;       /* a ring near the edge must never widen the page */
     min-height: 100vh;
     min-height: 100svh;   /* phones: the small viewport, so nothing hides under the browser toolbar */
     display: flex;
@@ -89,6 +90,27 @@ body {
 
 .home-content .depth-label {
     margin: 0 0 1.25rem;
+}
+
+/* Depth markers are drawn like elevation datums: the label, then a hairline */
+/* running to the edge of its block. (A border, not a background, so it     */
+/* also prints.)                                                             */
+.home .depth-label,
+.portfolio-label,
+.title-block .depth-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.home .depth-label::after,
+.portfolio-label::after,
+.title-block .depth-label::after {
+    content: "";
+    flex: 1;
+    height: 0;
+    border-top: 1px solid var(--color-line-strong);
+    transform-origin: left;
 }
 
 .home-content h1 {
@@ -110,7 +132,8 @@ body {
     gap: 20px 32px;
 }
 
-/* The one primary button on the site */
+/* The one primary button on the site. It rises quickly and settles slowly, */
+/* like anything in water.                                                   */
 .cta {
     display: inline-block;
     padding: 0.75em 1.25em;
@@ -119,12 +142,13 @@ body {
     font-weight: 600;
     text-decoration: none;
     border-radius: var(--radius);
-    transition: transform var(--dur-ui) var(--ease-out);
+    transition: transform 320ms var(--ease-out);
 }
 
 .cta:hover,
 .cta:focus-visible {
     transform: translateY(-2px);
+    transition-duration: 200ms;
 }
 
 .socials {
@@ -153,9 +177,36 @@ body {
     fill: currentColor;
 }
 
-/* ******************************************** */
+/* Touch the surface: rings spread from where you click or tap (site.js   */
+/* creates them). They sit behind the text, at the same flattened angle   */
+/* as the float's own ripples.                                            */
+.tap-ring {
+    position: absolute;
+    width: 160px;
+    height: 36px;
+    border: 1px solid var(--color-text);
+    border-radius: 50%;
+    translate: -50% -50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+    animation: tap-ring 700ms var(--ease-out) forwards;
+}
+
+.tap-ring.second {
+    width: 240px;
+    height: 54px;
+    animation-delay: 220ms;
+}
+
+@keyframes tap-ring {
+    from { scale: 0.25; opacity: 0.45; }
+    to   { scale: 1;    opacity: 0; }
+}
+
+/* ********************************************* */
 /* Hero drawing: the float, its line, the ripples */
-/* ******************************************** */
+/* ********************************************* */
 
 .hero-float {
     display: none;   /* shown at 900px and wider, see below */
@@ -180,6 +231,7 @@ body {
         width: 100%;
         height: 100%;
         overflow: visible;
+        pointer-events: auto;   /* only the drawn shapes take the pointer, so it can be hovered */
     }
 }
 
@@ -198,9 +250,19 @@ body {
     fill: var(--color-text);
 }
 
-.float-submerged {
-    fill: var(--color-water-tint);   /* tints the part of the float under the waterline */
-    opacity: 0.55;
+/* The part of the float under the waterline: the same shapes, seen through */
+/* the water (tinted) and shifted two units by refraction.                   */
+.float-under {
+    translate: 2px 0;
+}
+
+.float-under .float-body {
+    fill: var(--color-under-fog);
+}
+
+.float-under .float-antenna,
+.float-under .float-cap {
+    fill: var(--color-under-float);
 }
 
 .ripple {
@@ -214,6 +276,10 @@ body {
 
 .ripple-2 {
     opacity: 0.2;
+}
+
+.ripple-cast {
+    opacity: 0;   /* only appears once, when the float breaks the surface on first paint */
 }
 
 /* Idle: the float bobs slowly and the ripples spread out and fade. */
@@ -239,16 +305,92 @@ body {
     animation: ripple 3.6s ease-out -1.8s infinite;   /* negative delay: starts half a cycle in, no pop on load */
 }
 
-/* The float dips once when the button is hovered or focused. Written */
-/* inside a "no-preference" media query because the :has() selector   */
-/* outranks the plain reduced-motion override at the end of this file. */
-@keyframes dip {
-    0%   { transform: translateY(0); }
-    45%  { transform: translateY(12px); }
-    100% { transform: translateY(0); }
+/* Dimensions: hover the drawing (or Tab to the button) and it is dimensioned  */
+/* like a part on a plate — a dashed waterline datum and two dimension lines  */
+/* with the drawing's own values.                                             */
+.float-wl line,
+.float-dims line {
+    stroke: var(--color-text-muted);
+    stroke-width: 1;
+    fill: none;
+    vector-effect: non-scaling-stroke;
 }
 
+.float-wl line {
+    stroke-dasharray: 6 4;
+}
+
+.float-wl text,
+.float-dims text {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    fill: var(--color-text-muted);
+}
+
+.float-wl,
+.float-dims {
+    opacity: 0;
+    transition: opacity var(--dur-ui) var(--ease-out);
+}
+
+.hero-float svg:hover .float-wl,
+.hero-float svg:hover .float-dims,
+.home:has(.cta:focus-visible) .float-wl,
+.home:has(.cta:focus-visible) .float-dims {
+    opacity: 1;
+}
+
+/* Motion that only runs when the visitor has not asked for reduced motion: */
+/* the first-paint rise, the dip, and the tap ripples reaching the float.   */
 @media (prefers-reduced-motion: no-preference) {
+    /* First paint: the text rises in four short beats… */
+    @keyframes rise {
+        from { opacity: 0; translate: 0 14px; }
+        to   { opacity: 1; translate: 0 0; }
+    }
+
+    .home-content > * {
+        animation: rise 600ms var(--ease-out) both;
+    }
+
+    .home-content > :nth-child(2) { animation-delay: 70ms; }
+    .home-content > :nth-child(3) { animation-delay: 140ms; }
+    .home-content > :nth-child(4) { animation-delay: 210ms; }
+
+    /* …and the float comes up from under the waterline, with one larger ripple */
+    /* as it breaks the surface.                                                  */
+    @keyframes float-rise {
+        from { transform: translateY(44px); }
+        70%  { transform: translateY(-6px); }
+        to   { transform: translateY(0); }
+    }
+
+    .float-rise {
+        animation: float-rise 900ms var(--ease-out) both;
+    }
+
+    @keyframes ripple-cast {
+        from { transform: scale(0.6); opacity: 0.5; }
+        to   { transform: scale(1.4); opacity: 0; }
+    }
+
+    .ripple-cast {
+        animation: ripple-cast 900ms ease-out 520ms forwards;   /* forwards, not both: stays invisible during the delay */
+    }
+
+    /* The float dips once when the button is hovered or focused, or when a */
+    /* tap ripple reaches it (--reach is the travel time, set by site.js).  */
+    @keyframes dip {
+        0%   { transform: translateY(0); }
+        45%  { transform: translateY(12px); }
+        100% { transform: translateY(0); }
+    }
+
+    .home.disturbed .float-dip {
+        animation: dip 0.4s var(--ease-out) var(--reach, 0ms);
+    }
+
     .home:has(.cta:hover) .float-dip,
     .home:has(.cta:focus-visible) .float-dip {
         animation: dip 0.4s var(--ease-out);
@@ -282,32 +424,58 @@ body {
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-line);
     border-radius: var(--radius);
-    transition: transform var(--dur-ui) var(--ease-out),
+    transition: transform 320ms var(--ease-out),
                 border-color var(--dur-ui) var(--ease-out);
 }
 
-/* Buoyancy: a card rises slightly under the pointer or keyboard focus */
+/* Buoyancy: a card rises quickly under the pointer or keyboard focus and */
+/* settles back more slowly.                                               */
 .project-card:hover,
 .project-card:focus-within {
     transform: translateY(-3px);
     border-color: var(--color-line-strong);
+    transition-duration: 200ms, var(--dur-ui);
 }
 
-/* Cards surface into view as you scroll down to them. Browsers without */
-/* scroll-driven animations skip this block and simply show the cards.   */
-/* This animates `translate` (not `transform`) on purpose: the hover    */
-/* lift above uses `transform`, and the two must not overwrite each     */
-/* other.                                                                */
+/* Cards surface into view as you scroll down to them, and each card's image */
+/* is lit from above: shaded while the card is deep in the viewport, clear as */
+/* it rises toward the surface (--lit goes 0 → 1). Browsers without          */
+/* scroll-driven animations skip this block and simply show the cards.       */
+/* This animates `translate` (not `transform`) on purpose: the hover lift    */
+/* above uses `transform`, and the two must not overwrite each other.        */
 @keyframes surface {
     from { opacity: 0; translate: 0 18px; }
     to   { opacity: 1; translate: 0 0; }
 }
 
+@keyframes lit {
+    from { --lit: 0; }
+    to   { --lit: 1; }
+}
+
+@keyframes draw {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
 @supports (animation-timeline: view()) {
     .project-card {
-        animation: surface var(--ease-out) both;
-        animation-timeline: view();
-        animation-range: entry 0% entry 35%;
+        animation: surface var(--ease-out) both, lit linear both;
+        animation-timeline: view(), view();
+        animation-range: entry 0% entry 35%, cover 5% cover 60%;
+    }
+
+    /* The Work marker's datum line draws out as the section enters. It    */
+    /* follows the whole grid's timeline (named --work), not its own 1px   */
+    /* box, so the drawing takes the first quarter of the grid's entry.    */
+    .portfolio {
+        view-timeline: --work;
+    }
+
+    .portfolio-label::after {
+        animation: draw linear both;
+        animation-timeline: --work;
+        animation-range: entry 0% entry 25%;
     }
 }
 
@@ -332,12 +500,78 @@ body {
     -webkit-box-orient: vertical;
 }
 
+.project-frame {
+    display: block;
+    position: relative;
+    border-radius: calc(var(--radius) - 4px);
+    overflow: hidden;
+}
+
+/* the water shade over the image; hover or focus clears it fully */
+.project-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-bg-card);
+    opacity: calc((1 - var(--lit)) * 0.5);
+    pointer-events: none;
+}
+
+.project-card:hover .project-frame::after,
+.project-card:focus-within .project-frame::after {
+    opacity: 0;
+    transition: opacity var(--dur-ui) var(--ease-out);   /* only the hover clear is eased; scroll tracks exactly */
+}
+
 .project-img {
     display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    border-radius: calc(var(--radius) - 4px);
+}
+
+/* ***************************************** */
+/* Title block: the page ends like a drawing */
+/* ***************************************** */
+
+.title-block {
+    margin: 3rem 1.5rem 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line-strong);
+}
+
+.title-block .depth-label {
+    margin: 0 0 1rem;
+}
+
+/* Each cell draws its own rule (an outline), so a last row with empty */
+/* tracks shows nothing there, and the rules also print.               */
+.title-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    margin: 0;
+    border: 1px solid var(--color-line-strong);
+}
+
+.title-grid > div {
+    background: var(--color-bg-card);
+    outline: 1px solid var(--color-line-strong);
+    padding: 0.75rem 1rem;
+}
+
+.title-grid dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.title-grid dd {
+    margin: 0.3rem 0 0;
+    color: var(--color-text);
 }
 
 /* ***************************** */
@@ -347,6 +581,15 @@ body {
 @media (max-width: 900px) {
     .portfolio {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Where the scroll line and its reading run down the right edge, the grid */
+/* and title block keep a wider gutter so the reading never crosses them.  */
+@media (min-width: 1024px) {
+    .portfolio,
+    .title-block {
+        margin-inline: 5rem;
     }
 }
 
@@ -390,16 +633,25 @@ body {
         grid-template-columns: 1fr;
         margin-inline: 0.5rem;
     }
+
+    .title-block {
+        margin-inline: 0.5rem;
+    }
 }
 
-/* Reduced motion: no scroll-linked reveal, no bobbing float or ripple loop. */
-/* (The dip is already off: its rule only exists under "no-preference".)   */
-/* The short hover transitions stay.                                        */
+/* Reduced motion: no scroll-linked reveal or shade, no bobbing float or   */
+/* ripple loop, no drawn-in datum, no tap rings. (The first-paint rise and */
+/* the dips only exist under "no-preference".) Short hover transitions stay.*/
 @media (prefers-reduced-motion: reduce) {
     .project-card,
+    .portfolio-label::after,
     .float-bob,
     .ripple-1,
     .ripple-2 {
         animation: none;
+    }
+
+    .tap-ring {
+        display: none;
     }
 }

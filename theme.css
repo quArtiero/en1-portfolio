@@ -21,9 +21,18 @@
     initial-value: 0;
 }
 
+/* --lit is how much light reaches a card: 0 deep in the viewport, 1 near */
+/* the top. index.css animates it per card; 1 means "no shade".           */
+@property --lit {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1;
+}
+
 :root {
     color-scheme: dark;
-    --depth: 0;   /* plain starting value, for browsers that don't know @property */
+    --depth: 0;   /* plain starting values, for browsers that don't know @property */
+    --lit: 1;
 
     /* Palette — the water column, surface to bottom */
     --surface-water: #12394A;   /* top of the page, dawn */
@@ -39,7 +48,8 @@
     --color-text-muted: var(--mist);
     --color-accent: var(--lure);
     --color-float: var(--float);
-    --color-water-tint: var(--surface-water);   /* tints whatever sits under the waterline in the hero drawing */
+    --color-under-fog: color-mix(in oklab, var(--fog) 45%, var(--surface-water));     /* fog seen under the waterline */
+    --color-under-float: color-mix(in oklab, var(--float) 45%, var(--surface-water)); /* the float's paint seen under water */
     --color-bg-page: var(--deep-water);
     --color-bg-card: var(--mid-water);
     --color-bg-header: color-mix(in oklab, var(--deep-water) 85%, transparent);
@@ -108,14 +118,19 @@ html::before {
 
 /* Background layer 2: lake-chart contour lines, drifting very slowly.    */
 /* The SVG is used as a mask: it supplies the shapes, --fog the color.    */
+/* As you descend the bed comes up to meet you: the chart rises a little, */
+/* grows 8% and firms up from 8% to 13% opacity (translate/scale are      */
+/* separate properties, so they don't fight the drift on `transform`).    */
 html::after {
     content: "";
     position: fixed;
-    inset: -10px;
+    inset: -10vh -12px;
     z-index: -1;
     pointer-events: none;
     background-color: var(--fog);
-    opacity: 0.08;
+    opacity: calc(0.08 + var(--depth) * 0.05);
+    translate: 0 calc(var(--depth) * -6vh);
+    scale: calc(1 + var(--depth) * 0.08);
     -webkit-mask: url("./images/contours.svg") center / cover no-repeat;
     mask: url("./images/contours.svg") center / cover no-repeat;
     animation: drift 60s ease-in-out infinite alternate;
@@ -129,6 +144,10 @@ html::after {
 /* The signature: a 1px line down the right edge that lengthens as you  */
 /* scroll, ending in a lure. Desktop only. Purely decorative — it is     */
 /* drawn with empty pseudo-elements, so screen readers never see it.    */
+.depth-readout {
+    display: none;   /* the sounding is shown with the line and lure at 1024px and wider, below */
+}
+
 @media (min-width: 1024px) {
     body::before {   /* the line */
         content: "";
@@ -157,6 +176,33 @@ html::after {
         -webkit-mask: url("./images/lure.svg") center / contain no-repeat;
         mask: url("./images/lure.svg") center / contain no-repeat;
         transform: translateY(calc(var(--depth) * (100vh - 14px)));
+    }
+
+    /* The sounding: a live depth reading that rides level with the lure,   */
+    /* "00.0 M" at the top of the page to "10.0 M" at the bottom. Pure CSS: */
+    /* two counters computed from --depth (metres, then tenths).           */
+    @supports (width: round(down, 1.5px, 1px)) {
+        .depth-readout {
+            display: block;
+            position: fixed;
+            top: 0;
+            right: 46px;
+            z-index: 900;
+            pointer-events: none;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            line-height: 14px;   /* the lure's height, so the two stay level */
+            color: var(--color-text-muted);
+            transform: translateY(calc(var(--depth) * (100vh - 14px)));
+            counter-reset: metres round(down, calc(var(--depth) * 10), 1)
+                           tenths mod(round(down, calc(var(--depth) * 100), 1), 10);
+        }
+
+        .depth-readout::before {
+            content: counter(metres, decimal-leading-zero) "." counter(tenths) " M";
+        }
     }
 }
 
@@ -219,7 +265,8 @@ h2 {
     }
 
     body::before,
-    body::after {
+    body::after,
+    .depth-readout {
         display: none;
     }
 }
@@ -256,7 +303,8 @@ h2 {
     html::after,
     body::before,
     body::after,
-    div.hero-float {
+    div.hero-float,
+    div.depth-readout {
         display: none;
     }
 

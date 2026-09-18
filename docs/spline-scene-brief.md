@@ -98,9 +98,10 @@ YouTube video:
 
 What carries over from the SVG: the drawing is only shown at 900 px and
 wider, and it is marked decorative for screen readers. What does not: the
-CSS "dip on button hover" only works for the SVG (author the dip inside
-Spline instead), and the page's reduced-motion switch cannot reach inside
-the iframe. On phones the block is hidden, but the browser may still fetch
+dip on button hover or tap, the hover-in dimension lines, and the first-paint
+rise all only work for the SVG (author the dip inside Spline instead); the
+tap ripples on the page itself still work; and the page's reduced-motion
+switch cannot reach inside the iframe. On phones the block is hidden, but the browser may still fetch
 the scene, which is one more reason to keep it small.
 
 If you would rather not add a 3D scene, the SVG float is a finished

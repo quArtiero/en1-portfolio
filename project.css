@@ -83,8 +83,20 @@ body {
     border-radius: var(--radius);
 }
 
-.proj-container .depth-label {
+/* The kicker is drawn like an elevation datum: label, then a hairline to */
+/* the edge of the container (only the top kicker, not the "Code:" label). */
+.proj-container > .depth-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     margin: 0 0 0.75rem;
+}
+
+.proj-container > .depth-label::after {
+    content: "";
+    flex: 1;
+    height: 0;
+    border-top: 1px solid var(--color-line-strong);   /* a border, so it also prints */
 }
 
 .proj-header {
