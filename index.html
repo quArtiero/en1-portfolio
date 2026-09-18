@@ -59,22 +59,23 @@
         <!-- brief.md). Colors come from index.css so theme.css stays the only place  -->
         <!-- colors are defined. Shown at 900px and wider.                            -->
         <div class="hero-float" aria-hidden="true">
-            <svg viewBox="0 0 240 520" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <svg viewBox="0 0 240 700" preserveAspectRatio="xMidYMid meet" focusable="false">
                 <defs>
-                    <clipPath id="float-above-water"><rect x="0" y="0" width="240" height="400"/></clipPath>
-                    <clipPath id="float-below-water"><rect x="0" y="400" width="240" height="120"/></clipPath>
+                    <clipPath id="float-above-water"><rect x="0" y="0" width="240" height="580"/></clipPath>
+                    <clipPath id="float-below-water"><rect x="0" y="580" width="240" height="120"/></clipPath>
                 </defs>
                 <g class="float-bob">
-                    <line class="float-line" x1="120" y1="0" x2="120" y2="318"/>
+                    <!-- the line runs a little past the top of the antenna, so it stays joined while the float dips -->
+                    <line class="float-line" x1="120" y1="0" x2="120" y2="512"/>
                     <g class="float-dip">
-                        <rect class="float-antenna" x="118.25" y="318" width="3.5" height="48" rx="1.75"/>
-                        <ellipse class="float-body" cx="120" cy="400" rx="15" ry="38"/>
-                        <ellipse class="float-cap" cx="120" cy="400" rx="15" ry="38" clip-path="url(#float-above-water)"/>
-                        <ellipse class="float-submerged" cx="120" cy="400" rx="15" ry="38" clip-path="url(#float-below-water)"/>
+                        <rect class="float-antenna" x="118" y="498" width="4" height="48" rx="2"/>
+                        <ellipse class="float-body" cx="120" cy="580" rx="16" ry="40"/>
+                        <ellipse class="float-cap" cx="120" cy="580" rx="16" ry="40" clip-path="url(#float-above-water)"/>
+                        <ellipse class="float-submerged" cx="120" cy="580" rx="16" ry="40" clip-path="url(#float-below-water)"/>
                     </g>
                 </g>
-                <ellipse class="ripple ripple-1" cx="120" cy="400" rx="36" ry="8"/>
-                <ellipse class="ripple ripple-2" cx="120" cy="400" rx="62" ry="14"/>
+                <ellipse class="ripple ripple-1" cx="120" cy="580" rx="38" ry="8.5"/>
+                <ellipse class="ripple ripple-2" cx="120" cy="580" rx="66" ry="15"/>
             </svg>
         </div>
     </section>

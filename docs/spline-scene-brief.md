@@ -24,59 +24,79 @@ background must be transparent.
 ## Camera
 
 Slightly above the waterline, looking down at about 20°, the float centered
-and the line leaving through the top edge. Narrow field of view (or
-orthographic) so the float does not look wide-angle. Frame it tall, roughly
-1 : 2 (width : height), matching the SVG's `viewBox="0 0 240 520"`.
+low in the frame and the line leaving through the top edge. Narrow field of
+view (or orthographic) so the float does not look wide-angle. Frame it tall,
+about 1 : 3 (width : height), like the SVG's `viewBox="0 0 240 700"`; the
+box it fills on the page is between 1 : 2.5 and 1 : 3.5 depending on the
+window, so keep the important part in the middle.
 
 ## Colors (from `theme.css`)
 
-| Part                     | Token             | Hex       |
-|--------------------------|-------------------|-----------|
-| Float antenna and top    | `--float`         | `#F0492E` |
-| Float body below the top | `--fog`           | `#E6EFEC` |
-| Line                     | `--mist`          | `#9DB4B5` |
-| Ripples                  | `--fog` at ~30 %  | `#E6EFEC` |
-| Background               | transparent       | —         |
+| Part                        | Token                                   | Hex                       |
+|-----------------------------|-----------------------------------------|---------------------------|
+| Float antenna and top       | `--float`                               | `#F0492E`                 |
+| Float body below the water  | `--fog` tinted ~55 % with `--surface-water` | `#E6EFEC` over `#12394A` |
+| Line                        | `--mist`                                | `#9DB4B5`                 |
+| Ripples                     | `--fog` at ~30 %                        | `#E6EFEC`                 |
+| Background                  | transparent                             | —                         |
 
 Matte materials, no glossy reflections, no shadows on the (absent) ground.
 
-## States and events to author in Spline
+## States to author in Spline
 
 1. **Idle bob** — a loop: `Float` (and `Line` with it) drift up and down
    about 4 px on screen over ~3.6 s, ease in and out. `Ripples` slowly
    scale up ~25 % while fading out, then restart; offset the two rings by
-   half a cycle.
+   half a cycle. Keep it gentle: the page cannot switch this off for people
+   who have "reduce motion" turned on.
 2. **Dip** — on `Mouse Down` on `Float`: dip about 12 px down and return
    over 0.4 s.
-3. **Look** — a subtle `Mouse Hover` / cursor-follow on `Float` (a few
-   degrees of tilt), so it feels alive without being a toy.
+3. **Look** — a subtle `Mouse Hover` on `Float` (a few degrees of tilt).
+
+States 2 and 3 need the mouse to reach the scene; step 3 of the embed
+below turns that on. In **Play Settings**, turn *off* Orbit, Pan and Zoom
+and turn *on* page scrolling, or the scene will swallow the mouse wheel
+when the pointer is over it. If you would rather keep the scene purely
+decorative, skip states 2–3 and skip the `pointer-events` line in step 3.
 
 Keep it under **2 MB** total. If the file grows past that, simplify
-geometry before anything else.
+geometry before anything else. On the free Spline plan a small
+"Built with Spline" badge shows in the corner of the embed.
 
 ## Export and embed
 
 This site is plain HTML/CSS with no build step, so the scene goes in as an
-`<iframe>` (the same way YouTube videos are embedded on project pages):
+`<iframe>`, the same way the template's optional video block embeds a
+YouTube video:
 
-1. In Spline: **Export → Viewer** (public link). Copy the URL, which looks
-   like `https://my.spline.design/…/`.
+1. In Spline: **Export → Public URL**. Wait for the link to generate, then
+   copy the **Public URL** (not the Embed code). It looks like
+   `https://my.spline.design/…/`.
 2. In `index.html`, inside `<div class="hero-float" aria-hidden="true">`,
    replace the `<svg>…</svg>` with:
 
    ```html
-   <iframe src="PASTE THE SPLINE URL HERE" title="Fishing float" loading="lazy"></iframe>
+   <iframe src="PASTE THE SPLINE URL HERE" title="Fishing float" loading="lazy" tabindex="-1"></iframe>
    ```
 
-3. In `index.css`, next to `.hero-float svg { … }`, add the same sizing for
-   the iframe: `.hero-float iframe { width: 100%; height: 100%; border: 0; }`.
+   (`tabindex="-1"` keeps the Tab key from wandering into the scene.)
 
-Two things carry over automatically: the drawing is only shown at 900 px
-and wider (phones keep the lighter page), and it is marked decorative for
-screen readers. Two things do not: the CSS "dip on button hover" only works
-for the SVG, so author the dip inside Spline (state 2 above), and the
-`prefers-reduced-motion` switch cannot reach inside the iframe, so keep
-the idle loop gentle.
+3. In `index.css`, next to `.hero-float svg { … }`, add:
+
+   ```css
+   .hero-float iframe { width: 100%; height: 100%; border: 0; pointer-events: auto; }
+   ```
+
+   `pointer-events: auto` lets the mouse reach the scene for states 2–3
+   (the drawing's box does not overlap the text, so nothing else is
+   affected). Leave that line out for a decorative-only scene.
+
+What carries over from the SVG: the drawing is only shown at 900 px and
+wider, and it is marked decorative for screen readers. What does not: the
+CSS "dip on button hover" only works for the SVG (author the dip inside
+Spline instead), and the page's reduced-motion switch cannot reach inside
+the iframe. On phones the block is hidden, but the browser may still fetch
+the scene, which is one more reason to keep it small.
 
 If you would rather not add a 3D scene, the SVG float is a finished
 design in its own right — leave it as is.

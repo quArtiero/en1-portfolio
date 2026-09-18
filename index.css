@@ -198,7 +198,7 @@ body {
 }
 
 .float-submerged {
-    fill: var(--surface-water);   /* tints the part of the float under the waterline */
+    fill: var(--color-water-tint);   /* tints the part of the float under the waterline */
     opacity: 0.55;
 }
 
@@ -235,19 +235,23 @@ body {
 }
 
 .ripple-2 {
-    animation: ripple 3.6s ease-out 1.8s infinite;
+    animation: ripple 3.6s ease-out -1.8s infinite;   /* negative delay: starts half a cycle in, no pop on load */
 }
 
-/* The float dips once when the button is hovered or focused. */
+/* The float dips once when the button is hovered or focused. Written */
+/* inside a "no-preference" media query because the :has() selector   */
+/* outranks the plain reduced-motion override at the end of this file. */
 @keyframes dip {
     0%   { transform: translateY(0); }
     45%  { transform: translateY(12px); }
     100% { transform: translateY(0); }
 }
 
-.home:has(.cta:hover) .float-dip,
-.home:has(.cta:focus-visible) .float-dip {
-    animation: dip 0.4s var(--ease-out);
+@media (prefers-reduced-motion: no-preference) {
+    .home:has(.cta:hover) .float-dip,
+    .home:has(.cta:focus-visible) .float-dip {
+        animation: dip 0.4s var(--ease-out);
+    }
 }
 
 /* ************************************* */
@@ -387,12 +391,12 @@ body {
     }
 }
 
-/* Reduced motion: no scroll-linked reveal, no bobbing float or ripple loop, */
-/* no dip. The short hover transitions stay.                                 */
+/* Reduced motion: no scroll-linked reveal, no bobbing float or ripple loop. */
+/* (The dip is already off: its rule only exists under "no-preference".)   */
+/* The short hover transitions stay.                                        */
 @media (prefers-reduced-motion: reduce) {
     .project-card,
     .float-bob,
-    .float-dip,
     .ripple-1,
     .ripple-2 {
         animation: none;

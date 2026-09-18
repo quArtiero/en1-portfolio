@@ -39,6 +39,7 @@
     --color-text-muted: var(--mist);
     --color-accent: var(--lure);
     --color-float: var(--float);
+    --color-water-tint: var(--surface-water);   /* tints whatever sits under the waterline in the hero drawing */
     --color-bg-page: var(--deep-water);
     --color-bg-card: var(--mid-water);
     --color-bg-header: color-mix(in oklab, var(--deep-water) 85%, transparent);
