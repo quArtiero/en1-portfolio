@@ -97,6 +97,19 @@ Do not add a build step.
 
 Avoid adding JavaScript unless the student explicitly requests functionality
 that genuinely requires it. Prefer an HTML/CSS solution when one exists.
+The site already has exactly one script, `site.js`: a small fallback that
+keeps the scrolling background in sync on browsers without CSS scroll-driven
+animations. Do not add more JavaScript unless the student explicitly asks for
+something that needs it.
+
+The three Google Fonts `<link>` lines in every page's `<head>` are the one
+intended external dependency; keep them identical on every page (the fallback
+fonts named in `theme.css` cover the case where they fail to load).
+
+`docs/spline-scene-brief.md` describes an optional 3D hero scene embedded as
+an `<iframe>`. Adding it would introduce a cloud service and motion the
+reduced-motion switch cannot stop, so only do it if the student explicitly
+asks for it.
 
 The goal is that the student can open any site file and reasonably understand
 what is happening.
@@ -105,15 +118,25 @@ what is happening.
 
 ```text
 index.html          Home page: intro + grid of cards linking to every page
-index.css           Styles for index.html only
+index.css           Styles for index.html only (hero, float drawing, cards)
 project.css         Shared styles for every activity/project detail page
-theme.css           Shared color/font variables, imported by both CSS files
+theme.css           Design tokens (colors, fonts, sizes) AND the shared base
+                    every page gets: the water-column background, the
+                    scroll-progress line, typography, focus rings, and the
+                    reduced-motion switch. Imported by both CSS files.
+site.js             The only script: fallback that sets --depth from scroll
+                    on browsers without CSS scroll-driven animations
 template.html       Copy this to start a new activity or project page
 activityNN.html     One in-class activity's detail page (NN = 01, 02, ...)
 projectNN.html      One project's detail page (NN = 01, 02, ...)
 images/             All images. Named to match their page, e.g.
                     images/project04.png is the card/hero image for
-                    project04.html
+                    project04.html. Also two design assets used by
+                    theme.css, contours.svg (background) and lure.svg,
+                    and header.jpg, the placeholder hero that
+                    template.html starts with — keep it.
+docs/               Notes, e.g. spline-scene-brief.md for an optional 3D
+                    hero scene. Not part of the site.
 ```
 
 Numbers are always two digits (`01`, not `1`) so filenames sort correctly.
@@ -145,15 +168,18 @@ When the student asks to add a new activity or project:
    images/project04.png
    ```
 
-   Point the `proj-img-container img` element at that image.
+   Point the `proj-img-container img` element at that image and give it a
+   short `alt` text describing the picture.
 
 4. Fill in the page's:
 
    - `<title>`
-   - `<h2 class="proj-header">`
+   - `<h1 class="proj-header">` (the page title, above the hero image)
    - `.proj-desc`
 
-   using the student's actual content.
+   using the student's actual content. Leave the small
+   `<p class="depth-label">04 M — Project Portfolio</p>` kicker above the
+   title exactly as it is; it is part of the site's design, not content.
 
    Each page must have a specific `<title>` appropriate to that activity or
    project. Never leave generic text such as `Project`, `TITLE GOES HERE`, or
@@ -207,7 +233,8 @@ by one of these blocks.
 
 ### `.proj-code`
 
-A labeled dark code sample using `<pre><code>...</code></pre>`.
+A labeled dark code sample: an `<h2 class="depth-label">` label (for example
+`Code:`) followed by `<pre><code>...</code></pre>`.
 
 Use this only when code is genuinely part of the documented activity or
 project.
@@ -286,14 +313,9 @@ an appropriate iframe title.
 `index.html` contains a `.socials` box in the home section for links such as
 LinkedIn and GitHub.
 
-Icons are inline SVGs using:
-
-```html
-fill="currentColor"
-```
-
-This keeps icons crisp at different sizes and allows them to inherit colors
-from the site's theme.
+Icons are inline SVGs. `.social-link svg` in `index.css` sets
+`fill: currentColor`, so the icons inherit the link's color from the theme
+and need no fill attribute of their own. This keeps them crisp at any size.
 
 If asked to add another social platform or personal site, follow the existing
 `.social-link` pattern:
@@ -307,18 +329,33 @@ Do not replace these with icon image files.
 ## Styling rules
 
 All shared colors, fonts, and common sizing values live in `theme.css` as CSS
-custom properties, such as:
+custom properties. The palette is named after the water column
+(`--surface-water`, `--mid-water`, `--deep-water`, `--fog`, `--mist`,
+`--lure`, `--float`) and mapped onto the tokens the stylesheets actually use,
+such as:
 
 ```css
---color-primary
+--color-text
 --color-accent
 --radius
 ```
 
-`index.css` and `project.css` import `theme.css`.
+`--depth` (0 at the top of the page, 1 at the bottom) drives the background;
+do not set it by hand.
 
-When asked to change the site's overall appearance, color palette, fonts, or
-accent colors, change the appropriate variables in `theme.css`.
+`index.css` and `project.css` import `theme.css`, which also holds the
+shared base styles (background layers, scroll line, typography, focus rings,
+reduced-motion switch). Page layout stays in `index.css` / `project.css`.
+
+When asked to change the site's overall appearance, color palette, or accent
+colors, change the appropriate variables in `theme.css`.
+
+Fonts: the three typefaces are web fonts loaded by the Google Fonts `<link>`
+in every page's `<head>` (the same lines in `index.html`, `template.html`,
+and every activity/project page). `theme.css` only names them in
+`--font-display`, `--font-body`, and `--font-mono`. To change a font, update
+that `<link>` in every HTML file and the matching `--font-*` token; the names
+after the comma are the offline fallbacks.
 
 Do not scatter new hardcoded color values through `index.css` or
 `project.css`.

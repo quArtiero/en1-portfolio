@@ -1,7 +1,8 @@
 # My Engineering Portfolio
 
 This is my portfolio site for our intro-to-engineering/robotics course. It's
-a plain HTML/CSS website — no build tools, nothing to install — that
+a plain HTML/CSS website (plus one tiny script) — no build tools, nothing
+to install — that
 documents each in-class activity and project as I complete it, and doubles
 as a public page I can point people to.
 
@@ -68,7 +69,7 @@ file tells GitHub Pages to serve it as-is.
 ### 4. Confirm your site is live
 
 Visit the URL from step 3. Right now it'll still show the template's
-placeholder content — `FIRSTNAME LASTNAME`, a generic hero image, and so on.
+placeholder content — `FIRSTNAME LASTNAME`, placeholder text and images, and so on.
 That's expected. The point of this step is just to confirm the plumbing
 works: the page loads, images show up, and the activity/project cards link
 to their pages. You'll open your editor and personalize the actual content
@@ -105,7 +106,8 @@ left sidebar) to make the changes for you. For example:
 Things to personalize:
 
 - [ ] Your name, replacing `FIRSTNAME LASTNAME` everywhere it appears.
-- [ ] Your own header/banner image, replacing `images/header.jpg`.
+- [ ] Your own photos on each activity/project page (`images/header.jpg` is
+      only the placeholder that new pages start with).
 - [ ] Your LinkedIn and GitHub links in `index.html`'s social box.
 - [ ] Confirm you have the rights to publish any images you use — swap out
       any placeholder/stock images that aren't yours.
@@ -185,9 +187,13 @@ instructor, or a recruiter.
   site live and refreshes as you save changes. If it doesn't pop up
   automatically, open the **Ports** tab at the bottom of VS Code and click
   the globe icon next to port 5500.
-- **Locally, outside a Codespace:** just open `index.html` in a browser
-  (double-click it, or in VS Code right-click it and choose "Open with Live
-  Server" if you have that extension installed).
+- **Locally, outside a Codespace:** in VS Code, right-click `index.html` and
+  choose "Open with Live Server" (if you have that extension), or run
+  `python3 -m http.server 5500` in the site folder and open
+  http://localhost:5500 — that is exactly what the Codespace does.
+  Double-clicking `index.html` also works, but Chrome then hides the faint
+  contour background and the small lure on the scroll line; that is a
+  browser rule about local files, not a bug in your page.
 - **Live, on the internet:** your GitHub Pages URL from Setup, step 3 —
   this is what everyone else sees.
 
@@ -195,19 +201,26 @@ instructor, or a recruiter.
 
 ```
 index.html          Home page — intro + a grid of cards, one per activity/project
-index.css           Styles just for the home page
+index.css           Styles just for the home page (hero, the float drawing, cards)
 project.css         Shared styles for every activity/project detail page
-theme.css           Colors/fonts used by both stylesheets, in one place
+theme.css           The design "knobs" (colors, sizes, font names) plus the shared
+                    water-column background every page gets; the fonts themselves
+                    load from the Google Fonts line in each page's <head>
+site.js             The only script: a small fallback so the background still
+                    follows scroll in browsers without CSS scroll-driven animations
 template.html       Starting point for a new activity or project page
 activityNN.html     One in-class activity's page (e.g. activity01.html)
 projectNN.html      One project's page (e.g. project01.html)
-images/             All images, named to match their page (e.g. project04.png)
+images/             All images, named to match their page (e.g. project04.png),
+                    plus two design assets: contours.svg and lure.svg
+docs/               Notes for later, e.g. the brief for an optional 3D hero scene
 ```
 
-Each activity/project gets **one card** on the home page (image, title,
-one-line description) that links to **one detail page** with the fuller
-write-up: a hero image, a description, and optionally a photo gallery,
-an embedded video, or a code sample.
+Each activity/project gets **one card** on the home page (title, one-line
+description, image) that links to **one detail page** with the fuller
+write-up: a small depth-marker label, the title, a hero image, a
+description, and optionally a photo gallery, an embedded video, or a code
+sample.
 
 ## Adding a new activity or project
 

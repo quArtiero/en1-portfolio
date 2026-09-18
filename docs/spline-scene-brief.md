@@ -5,6 +5,11 @@ The home page hero currently shows a fishing float drawn as an inline SVG
 that can replace it, built by you in the Spline editor. Until a scene
 exists, the SVG stays and nothing is downloaded from Spline.
 
+Know the trade-off before you start: embedding the scene adds a third-party
+service to the page (the only one besides Google Fonts) and an idle
+animation that the site's reduce-motion switch cannot stop. The SVG float
+has neither problem. This is optional — do it only if you want it.
+
 ## What the scene is
 
 A single fishing float resting at the water's surface, seen from slightly
