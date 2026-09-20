@@ -32,17 +32,28 @@
     <!-- Project Information -->
     <div class="proj-container">
 
-        <p class="depth-label">04 M — Project Portfolio</p>
+        <!-- The sheet number is this page's position in the home-page grid.  -->
+        <!-- Delete the "Not issued" stamp once the write-up below is real.   -->
+        <p class="depth-label">04 M &mdash; Sheet NN / 06<span class="sheet-state">Not issued</span></p>
         <h1 class="proj-header">Project N: TITLE GOES HERE</h1>
+        <!-- One line: the assignment, the same wording as this page's card -->
+        <p class="proj-deck">WHAT THE ASSIGNMENT ASKED FOR</p>
 
-        <div class="proj-img-container">
+        <figure class="proj-img-container proj-figure">
             <img src="./images/header.jpg" alt="">
             <!-- Replace with this page's own hero image, e.g. ./images/project04.jpg, -->
-            <!-- and put a short description of the picture in alt="" -->
-        </div>
+            <!-- put a short description of the picture in alt="", and say what the -->
+            <!-- photo shows in the caption. Figures are numbered automatically.    -->
+            <figcaption>WHAT THIS PHOTO SHOWS</figcaption>
+        </figure>
 
         <div class="proj-desc">
-            <p>Describe the activity or project here: the goal, your approach, and what you learned. Write this yourself — an AI assistant should never invent your results.</p>
+            <!-- Until you write this page, leave the line below: it tells a visitor -->
+            <!-- the sheet is in progress instead of showing filler text.              -->
+            <p class="proj-pending">Write-up in progress &mdash; this sheet has not been issued yet.</p>
+            <!-- Then replace it with your own paragraphs: the goal, your approach, the -->
+            <!-- constraint, what went wrong, and what you would change. Write this     -->
+            <!-- yourself — an AI assistant should never invent your results.           -->
         </div>
 
         <!-- OPTIONAL BLOCK: photo gallery. Use when you have several   -->
@@ -75,6 +86,24 @@ for i in range(4):
 
     </div>
     <!-- End Project Information -->
+
+    <!-- The route on to the neighbouring sheets. Drop the first link on sheet -->
+    <!-- 01 and the second on the last sheet.                                  -->
+    <nav class="sheet-nav" aria-label="The other sheets">
+        <a class="sheet-prev" href="./PREVIOUS.html"><span>&larr; Previous sheet</span>PREVIOUS SHEET TITLE</a>
+        <a class="sheet-next" href="./NEXT.html"><span>Next sheet &rarr;</span>NEXT SHEET TITLE</a>
+    </nav>
+
+    <footer class="title-block">
+        <p class="depth-label">10 M &mdash; Bottom</p>
+        <dl class="title-grid">
+            <div><dt>Name</dt><dd>Pedro Quartiero</dd></div>
+            <div><dt>Course</dt><dd>Applications in Engineering &ndash; Simple Robotics</dd></div>
+            <div><dt>Term</dt><dd>Fall 2026</dd></div>
+            <div><dt>Sheet</dt><dd>NN of 06</dd></div>
+            <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
+        </dl>
+    </footer>
 
 </body>
 </html>
