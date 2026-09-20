@@ -8,20 +8,21 @@ body {
 /* Style for the header section */
 /* **************************** */
 
+/* A sheet is for reading, so the way back sits in the corner rather than */
+/* across the middle: a small opaque control at the top left, clear of the */
+/* text column. (It used to be as wide as the text and see-through, so     */
+/* paragraphs scrolled visibly behind it.)                                 */
 .header {
     position: fixed;
     top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 75%;
-    max-width: var(--container-max);
-    background: var(--color-bg-header);
+    left: 20px;
+    width: fit-content;
+    background: var(--color-bg-page);
     border: 1px solid var(--color-line);
     z-index: 1000;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 8px;
+    padding: 2px 8px;
     color: var(--color-text);
     border-radius: var(--radius);
 }
@@ -34,7 +35,7 @@ body {
 .header .navbar {
     display: flex;
     gap: 15px;
-    font-size: 1.5em;
+    font-size: 1.1em;
 }
 
 .header .navbar a {
@@ -76,7 +77,7 @@ body {
 .proj-container {
     max-width: var(--container-max);
     margin: auto;
-    margin-top: 110px;   /* clears the fixed header (20px from the top + its height) */
+    margin-top: 90px;
     background: var(--color-bg-card);
     border: 1px solid var(--color-line);
     padding: 28px;
@@ -327,8 +328,7 @@ figure.proj-figure {
 
 @media (max-width: 600px) {
     .header {
-        width: 92%;
-        padding: 6px;
+        padding: 2px 6px;
     }
 
     .header .name {
@@ -336,13 +336,23 @@ figure.proj-figure {
     }
 
     .header .navbar {
-        font-size: 1.1em;
+        font-size: 1em;
         gap: 8px;
     }
 
     .proj-container {
-        margin-top: 96px;
+        margin-top: 76px;
         padding: 16px;
+    }
+
+    /* Too narrow for a datum rule between the sheet number and the stamp: */
+    /* drop the rule and let the two sit at opposite ends instead.         */
+    .proj-container > .depth-label {
+        justify-content: space-between;
+    }
+
+    .proj-container > .depth-label::after {
+        display: none;
     }
 
     .proj-gallery img {

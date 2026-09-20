@@ -52,7 +52,7 @@
     --color-under-float: color-mix(in oklab, var(--float) 45%, var(--surface-water)); /* the float's paint seen under water */
     --color-bg-page: var(--deep-water);
     --color-bg-card: var(--mid-water);
-    --color-bg-header: color-mix(in oklab, var(--deep-water) 85%, transparent);
+    --color-bg-header: var(--deep-water);   /* opaque: text must not ghost through the bar */
     --color-line: color-mix(in oklab, var(--fog) 12%, transparent);   /* hairline borders */
     --color-line-strong: color-mix(in oklab, var(--fog) 24%, transparent);   /* hairline on hover */
     --color-code-bg: var(--deep-water);
