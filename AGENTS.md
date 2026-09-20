@@ -133,7 +133,7 @@ template.html       Copy this to start a new activity or project page
 activityNN.html     One in-class activity's detail page (NN = 01, 02, ...)
 projectNN.html      One project's detail page (NN = 01, 02, ...)
 images/             All images. Named to match their page, e.g.
-                    images/project04.png is the card/hero image for
+                    images/project04.jpg is the card/hero image for
                     project04.html. Also two design assets used by
                     theme.css, contours.svg (background) and lure.svg,
                     and header.jpg, the placeholder hero that
@@ -168,11 +168,12 @@ When the student asks to add a new activity or project:
    convention, for example:
 
    ```text
-   images/project04.png
+   images/project04.jpg
    ```
 
-   Point the `proj-img-container img` element at that image and give it a
-   short `alt` text describing the picture.
+   Point the `proj-img-container img` element at that image, give it a
+   short `alt` text describing the picture, and write one line in its
+   `<figcaption>` saying what the photo shows. Figures number themselves.
 
 4. Fill in the page's:
 
@@ -180,9 +181,24 @@ When the student asks to add a new activity or project:
    - `<h1 class="proj-header">` (the page title, above the hero image)
    - `.proj-desc`
 
-   using the student's actual content. Leave the small
-   `<p class="depth-label">04 M — Project Portfolio</p>` kicker above the
-   title exactly as it is; it is part of the site's design, not content.
+   using the student's actual content, plus the two lines that make the
+   page a sheet in the set:
+
+   - the kicker, `<p class="depth-label">04 M — Sheet NN / 06</p>`, where
+     NN is the page's position in the home-page grid and 06 is the number
+     of sheets. Adding a seventh page means updating the total on all of
+     them.
+   - the deck, `<p class="proj-deck">`, one line saying what the
+     assignment asked for — the same wording as this page's card on the
+     home page.
+
+   While the write-up is still unwritten, leave the `Not issued` stamp in
+   the kicker and the `<p class="proj-pending">` line in place of the
+   prose. Delete both the moment real text goes in.
+
+   Update the `sheet-nav` links at the foot of the page, and of its two
+   neighbours, so the route through the set stays unbroken, and set the
+   SHEET cell in the title block.
 
    Each page must have a specific `<title>` appropriate to that activity or
    project. Never leave generic text such as `Project`, `TITLE GOES HERE`, or
