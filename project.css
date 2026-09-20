@@ -109,10 +109,12 @@ body {
     margin: 0 0 1.5rem;
 }
 
-.proj-img-container img {
+/* Every photo on a sheet, hero or figure, is sized the same way. */
+.proj-img-container img,
+.proj-figure img {
     display: block;
     max-width: 100%;
-    max-height: 70vh;   /* a portrait photo is a plate to look at, not a wall to scroll past */
+    max-height: 70vh;   /* a tall photo is a plate to look at, not a wall to scroll past */
     width: auto;
     height: auto;
     margin: 0 auto;
@@ -249,6 +251,12 @@ pre code {
 figure.proj-figure {
     margin: 0 0 1.5rem;
     counter-increment: figure;
+}
+
+/* A figure sitting between paragraphs: the text column is capped at 68ch, */
+/* but a photo may use the full width of the sheet.                        */
+.proj-desc .proj-figure {
+    margin: 1.75rem 0;
 }
 
 .proj-figure figcaption {

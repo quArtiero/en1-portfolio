@@ -32,3 +32,7 @@ htmlcov/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Apple photo originals — convert to .jpg before adding them to a page
+*.HEIC
+*.heic
