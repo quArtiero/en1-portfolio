@@ -306,6 +306,19 @@ Do not create a new reusable block solely for a one-time cosmetic variation.
 
 Follow the existing `images/` organization and naming conventions.
 
+Photographs are JPEGs named after their page (`project04.jpg`). Drawings and
+flat-color graphics stay SVG (`contours.svg`, `lure.svg`).
+
+Keep photographs small. A photo straight off a phone is 15–25 MB, and the
+home page loads every card image at once, so an unresized photo makes the
+site unusable on mobile data. Before adding one, resize the long edge to
+about 1600px and save as JPEG at quality 80 — that is roughly 400 KB and
+looks identical on screen:
+
+```text
+sips -Z 1600 -s format jpeg -s formatOptions 80 big-photo.jpg --out images/project04.jpg
+```
+
 Use relative paths.
 
 Do not:

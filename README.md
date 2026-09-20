@@ -212,8 +212,10 @@ site.js             The only script: a fallback so the background follows scroll
 template.html       Starting point for a new activity or project page
 activityNN.html     One in-class activity's page (e.g. activity01.html)
 projectNN.html      One project's page (e.g. project01.html)
-images/             All images, named to match their page (e.g. project04.png),
-                    plus two design assets: contours.svg and lure.svg
+images/             All images, named to match their page (e.g. project04.jpg).
+                    Resize photos to ~1600px before adding them — a raw phone
+                    photo is 20 MB and makes the site crawl on mobile data.
+                    Also two design assets: contours.svg and lure.svg
 docs/               Notes for later, e.g. the brief for an optional 3D hero scene
 ```
 
