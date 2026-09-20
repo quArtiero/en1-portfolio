@@ -309,6 +309,12 @@ Follow the existing `images/` organization and naming conventions.
 Photographs are JPEGs named after their page (`project04.jpg`). Drawings and
 flat-color graphics stay SVG (`contours.svg`, `lure.svg`).
 
+`images/icon-surface.svg` and `images/icon-work.svg` are the tab icons: the
+same lure, at the surface for the home page and lowered on its line for an
+activity/project sheet. They are the one place colors are written out
+instead of coming from `theme.css`, because a favicon has no CSS context to
+inherit from. If the palette changes, change those two files too.
+
 Keep photographs small. A photo straight off a phone is 15–25 MB, and the
 home page loads every card image at once, so an unresized photo makes the
 site unusable on mobile data. Before adding one, resize the long edge to
@@ -402,6 +408,23 @@ When introducing new layout behavior, provide an appropriate mobile layout
 rather than assuming a desktop-width display.
 
 Prefer simple, readable CSS over clever or highly abstract solutions.
+
+## Small things that are there on purpose
+
+These are quiet details, not accidents. Do not "clean them up".
+
+- The lure at the end of the scroll line tips onto its side over the last
+  3% of the page, the way one does when it reaches the bed (`theme.css`).
+- Hovering the hero drawing dimensions it like a part on a plate, including
+  its own motion: `BOB ±4 · T 7.2 S`. Those numbers are real. If you ever
+  change the `bob` keyframes in `index.css`, change the note in
+  `index.html` to match, or the drawing starts lying.
+- The two tab icons put the lure at a different depth on the home page than
+  on a sheet, so several open tabs read as a depth profile.
+- `index.html` ends with a NOTES block in the source, written the way notes
+  on a drawing sheet are written. Every line must stay true of the page.
+- Printing is a designed state, not an afterthought: dark text on white,
+  links print their address, and nothing splits across a page.
 
 ## Content authenticity — important
 

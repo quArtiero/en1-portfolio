@@ -175,7 +175,24 @@ html::after {
         background: var(--lure);
         -webkit-mask: url("./images/lure.svg") center / contain no-repeat;
         mask: url("./images/lure.svg") center / contain no-repeat;
-        transform: translateY(calc(var(--depth) * (100vh - 14px)));
+        /* `translate` rather than `transform`, so the rotate below pivots */
+        /* where the line meets the lure instead of swinging it sideways.  */
+        translate: 0 calc(var(--depth) * (100vh - 14px));
+        transform-origin: 50% 0;
+    }
+
+    /* At the very bottom of the page the lure tips onto its side, the way */
+    /* one does when it finally reaches the bed. Nothing announces it.     */
+    @supports (animation-timeline: scroll()) {
+        @keyframes lure-lands {
+            to { rotate: 22deg; }
+        }
+
+        body::after {
+            animation: lure-lands linear both;
+            animation-timeline: scroll(root);
+            animation-range: 97% 100%;
+        }
     }
 
     /* The sounding: a live depth reading that rides level with the lure,   */
@@ -227,6 +244,12 @@ h2 {
 :where(a[href]) {
     color: var(--color-accent);
     text-underline-offset: 0.15em;
+}
+
+/* Highlighting text uses the site's own accent, not the browser's blue. */
+::selection {
+    background: var(--color-accent);
+    color: var(--color-bg-page);
 }
 
 /* Keyboard focus ring, on everything focusable */
@@ -387,5 +410,31 @@ h2 {
         background: none;
         color: var(--color-accent);
         border: 1px solid var(--color-line-strong);
+    }
+
+    @page {
+        margin: 18mm;
+    }
+
+    /* Nothing that reads as one object should be split across two pages. */
+    div.proj-container,
+    figure.proj-figure,
+    article.project-card,
+    .title-grid > div,
+    nav.sheet-nav {
+        break-inside: avoid;
+    }
+
+    /* On paper a link cannot be clicked, so it prints its address. */
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-family: var(--font-mono);
+        font-size: 0.75em;
+        word-break: break-all;
+    }
+
+    /* An embedded video is a black rectangle on paper; its caption stays. */
+    div.proj-video-container {
+        display: none;
     }
 }

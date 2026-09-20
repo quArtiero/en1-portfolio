@@ -280,7 +280,10 @@ body {
     opacity: 0;   /* only appears once, when the float breaks the surface on first paint */
 }
 
-/* Idle: the float bobs slowly and the ripples spread out and fade. */
+/* Idle: the float bobs slowly and the ripples spread out and fade.      */
+/* These two numbers are printed on the drawing as "BOB ±4 · T 7.2 S"     */
+/* (see .float-note in index.html): ±4 units, and 3.6s per half-cycle     */
+/* with `alternate`, so a full period is 7.2s. Change one, change both.   */
 @keyframes bob {
     from { transform: translateY(-4px); }
     to   { transform: translateY(4px); }
@@ -319,7 +322,8 @@ body {
 }
 
 .float-wl text,
-.float-dims text {
+.float-dims text,
+.float-note {
     font-family: var(--font-mono);
     font-size: 13px;
     letter-spacing: 0.08em;
@@ -327,15 +331,18 @@ body {
 }
 
 .float-wl,
-.float-dims {
+.float-dims,
+.float-note {
     opacity: 0;
     transition: opacity var(--dur-ui) var(--ease-out);
 }
 
 .hero-float svg:hover .float-wl,
 .hero-float svg:hover .float-dims,
+.hero-float svg:hover .float-note,
 .home:has(.cta:focus-visible) .float-wl,
-.home:has(.cta:focus-visible) .float-dims {
+.home:has(.cta:focus-visible) .float-dims,
+.home:has(.cta:focus-visible) .float-note {
     opacity: 1;
 }
 

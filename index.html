@@ -8,6 +8,8 @@
     <!-- Recommended meta tags -->
     <meta name="description" content="Pedro Quartiero's engineering portfolio: activities and projects from an intro-to-engineering course.">
 
+    <link rel="icon" href="./images/icon-surface.svg" type="image/svg+xml">
+
     <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,6 +125,10 @@
                     </g>
                 </g>
 
+                <!-- The plate dimensions its own motion too. These numbers are -->
+                <!-- the real ones: see @keyframes bob in index.css.             -->
+                <text class="float-note" x="30" y="672">BOB &#177;4 &#183; T 7.2 S</text>
+
                 <ellipse class="ripple ripple-1" cx="120" cy="580" rx="38" ry="8.5"/>
                 <ellipse class="ripple ripple-2" cx="120" cy="580" rx="66" ry="15"/>
                 <ellipse class="ripple ripple-cast" cx="120" cy="580" rx="66" ry="15"/>
@@ -201,6 +207,32 @@
             <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
         </dl>
     </footer>
+
+    <!--
+    NOTES
+
+    1. Depths on this site are scroll position, not distance. 00 M is the
+       top of a page and 10 M is the bottom. They are a way of reading the
+       page, not a measurement of anything.
+
+    2. One CSS variable does the work: --depth, 0 at the surface and 1 at
+       the bottom. The background color, the dawn light, the contour chart,
+       the line down the right edge, the lure and the sounding all read it.
+       It is set by a CSS scroll-driven animation in theme.css; site.js only
+       steps in on browsers that cannot do that yet.
+
+    3. The contour lines in the background are drawn to look like a lake
+       chart. They are decorative. They are not survey data.
+
+    4. Every loop and every scroll-linked effect is switched off when the
+       visitor's system asks for reduced motion.
+
+    5. The float in the hero is an SVG drawn by hand, further up this file.
+       Hover it and it dimensions itself.
+
+    6. Built as plain HTML and CSS: no framework, no build step, one small
+       script. The source is at github.com/quArtiero/en1-portfolio.
+    -->
 
 </body>
 </html>
