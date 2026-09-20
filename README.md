@@ -239,7 +239,8 @@ worth skimming yourself too, so you can do it by hand if you ever need to.
 
 Other things you can ask for once the basics are in place:
 - *"Add a photo gallery to project04.html with these three images."*
-- *"Embed my YouTube video <link> on project04.html."*
+- *"Embed my YouTube video <link> on project04.html."* (a vertical video,
+  like a Short, gets the `is-vertical` modifier so it stays tall)
 - *"Change the site's accent color to blue"* — this only requires editing
   `theme.css`, since both stylesheets pull their colors from there.
 

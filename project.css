@@ -188,6 +188,16 @@ pre code {
     border: 0;
 }
 
+/* Add "is-vertical" for a video filmed upright on a phone (e.g. a YouTube */
+/* Short), so it keeps its tall shape instead of sitting in a wide black   */
+/* box: <div class="proj-video-container is-vertical">                     */
+.proj-video-container.is-vertical {
+    padding-top: 0;
+    aspect-ratio: 9 / 16;
+    max-width: 320px;
+    margin-inline: auto;
+}
+
 /* ***************************** */
 /* Responsive: tablet and mobile */
 /* ***************************** */

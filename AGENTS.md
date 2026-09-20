@@ -273,6 +273,17 @@ It wraps an `<iframe>`.
 Do not set a fixed pixel height on the iframe itself. The wrapper controls the
 aspect ratio responsively.
 
+The wrapper is 16:9 by default. For a video filmed upright on a phone (a
+YouTube Short, for example), add the `is-vertical` modifier so it keeps its
+tall shape instead of sitting inside a wide black box:
+
+```html
+<div class="proj-video-container is-vertical">
+```
+
+An optional `<h2 class="depth-label">` above the block labels it, the same way
+the code block is labelled.
+
 Do not download YouTube videos or store video files in this repository when an
 embed is appropriate.
 
