@@ -184,10 +184,11 @@ When the student asks to add a new activity or project:
    using the student's actual content, plus the two lines that make the
    page a sheet in the set:
 
-   - the kicker, `<p class="depth-label">04 M — Sheet NN / 06</p>`, where
-     NN is the page's position in the home-page grid and 06 is the number
-     of sheets. Adding a seventh page means updating the total on all of
-     them.
+   - the kicker, `<p class="depth-label">04 M — Sheet NN / 08</p>`, where
+     NN is the page's position in the home-page grid and the second number
+     is how many sheets there are in total. Adding a page means bumping
+     that total on every sheet, in both the kicker and the SHEET cell of
+     the title block, and in `template.html`.
    - the deck, `<p class="proj-deck">`, one line saying what the
      assignment asked for — the same wording as this page's card on the
      home page.

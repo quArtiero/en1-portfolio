@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Project 5: Spirograph Drawing Machine</title>
+    <link rel="icon" href="./images/icon-work.svg" type="image/svg+xml">
+
+    <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <link rel="stylesheet" href="./project.css">
+
+    <!-- Small fallback script: keeps the background depth in sync with scroll on older browsers -->
+    <script src="./site.js" defer></script>
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <p class="depth-label">04 M &mdash; Sheet 08 / 08</p>
+        <h1 class="proj-header">Project 5: Spirograph Drawing Machine</h1>
+        <p class="proj-deck">Create geometric designs with two rotating motors.</p>
+
+        <figure class="proj-img-container proj-figure">
+            <img src="./images/project05.jpg" alt="A spirograph drawn in black marker on lined notebook paper: dozens of overlapping loops forming a thick ring, inked almost solid in the middle, with one small clear hole left at the centre.">
+            <figcaption>What the machine drew.</figcaption>
+        </figure>
+
+        <div class="proj-desc">
+            <p>The brief was to draw with two motors. A pen rides at the end of a linked arm, each link turned by its own motor, and the shape it traces comes out of the relationship between the two speeds. The card asks the same machine from two sides: as an artist, which designs actually look good &mdash; simple, complex, or wild; as a mathematician, which variables change the drawing (speed, arm length), and whether you can predict the output from the inputs.</p>
+
+            <p>I built the arm out of two beams that meet at a joint, both driven from the hub end. The marker is strapped to the far end with rubber bands so it rests its own weight on the paper, and the paper is clipped flat to two baseplates underneath, so the pen always has a fixed sheet to work on while the arm swings.</p>
+
+            <figure class="proj-figure">
+                <img src="./images/project05-02.jpg" alt="The whole machine on a desk: two yellow baseplates with a sheet of lined paper clipped flat between them, a white marker held upright by rubber bands at the end of a light blue beam, and black beams running from the joint back to the white SPIKE Prime hub at the right.">
+                <figcaption>The machine: paper clipped to the baseplates, marker strapped to the end of the arm.</figcaption>
+            </figure>
+
+            <figure class="proj-figure">
+                <img src="./images/project05-03.jpg" alt="A close view of the arm: two black beams meeting at a black connector block that forms the joint, with the light blue beam carrying the pen running off to the left, and the motors and pink connectors at the hub on the right.">
+                <figcaption>The joint, and the two drives back at the hub.</figcaption>
+            </figure>
+
+            <p>It ran long enough to go back over its own path many times. The loops close into a ring, the middle fills in almost solid, and one small gap survives at the centre where the pen never reached.</p>
+
+            <p class="proj-pending">Still to add: the two motor speeds and the code I ran, how long I let it draw, and whether I got to the challenge (varying the speed difference without changing the code).</p>
+        </div>
+
+        <!-- The machine drawing -->
+        <figure class="proj-figure">
+            <div class="proj-video-container is-vertical">
+                <iframe src="https://www.youtube.com/embed/hQDfXuNbgac" title="The LEGO spirograph machine drawing" allowfullscreen></iframe>
+            </div>
+            <figcaption>The arm running.</figcaption>
+        </figure>
+
+    </div>
+    <!-- End Project Information -->
+
+    <nav class="sheet-nav" aria-label="The other sheets">
+        <a class="sheet-prev" href="./project04.html"><span>&larr; Previous sheet</span>Project 4: Top Spinner</a>
+    </nav>
+
+    <footer class="title-block">
+        <p class="depth-label">10 M &mdash; Bottom</p>
+        <dl class="title-grid">
+            <div><dt>Name</dt><dd>Pedro Quartiero</dd></div>
+            <div><dt>Course</dt><dd>Applications in Engineering &ndash; Simple Robotics</dd></div>
+            <div><dt>Term</dt><dd>Fall 2026</dd></div>
+            <div><dt>Sheet</dt><dd>08 of 08</dd></div>
+            <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
+        </dl>
+    </footer>
+
+</body>
+</html>
