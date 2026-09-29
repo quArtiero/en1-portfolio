@@ -52,10 +52,30 @@
                 <figcaption>The joint, and the two drives back at the hub.</figcaption>
             </figure>
 
-            <p>It ran long enough to go back over its own path many times. The loops close into a ring, the middle fills in almost solid, and one small gap survives at the centre where the pen never reached.</p>
+            <p>I ran both motors continuously at speeds that are close but not equal: 210 and 200 degrees per second, a ratio of 21 to 20. That one-part-in-twenty difference is the whole pattern. At matched speeds the pen would retrace a single loop forever; slightly off, every pass lands a little rotated from the one before, so the loops walk around the centre instead of closing on themselves. The two motors only come back into step after 21 turns of one and 20 of the other &mdash; about 36 seconds at those speeds &mdash; and anything past that draws over the same path again.</p>
 
-            <p class="proj-pending">Still to add: the two motor speeds and the code I ran, how long I let it draw, and whether I got to the challenge (varying the speed difference without changing the code).</p>
+            <p>That is what the sheet shows: the loops close into a ring, the middle is inked almost solid, and one small gap survives at the centre where the pen never reached.</p>
+
+            <p class="proj-pending">Still to add: how long I let it run, and whether I got to the challenge (varying the speed difference without changing the code).</p>
         </div>
+
+        <div class="proj-code">
+            <h2 class="depth-label">Code:</h2>
+            <pre><code># Setup: spirograph motors are connected to ports C and D.
+from hub import port
+import runloop
+import motor
+
+async def main():
+    # Run the motors continuously at a close 21:20 speed ratio.
+    motor.run(port.C, 210)
+    motor.run(port.D, 200)
+
+    # Keep the spirograph drawing until you stop the program.
+    while True:
+        await runloop.sleep_ms(10)
+
+runloop.run(main())</code></pre></div>
 
         <!-- The machine drawing -->
         <figure class="proj-figure">
