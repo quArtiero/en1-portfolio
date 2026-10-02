@@ -522,6 +522,15 @@ unless they are genuinely justified and appropriate.
 A strong first-year portfolio should sound thoughtful and specific, not
 inflated.
 
+Voice, calibrated with the student (Oct 2026): plain, fluent,
+conversational first-person English. Contractions are normal. State
+facts directly instead of staging them: no "not X, but Y" setups, no
+aphoristic closing lines, no neat three-part lists, no decorative
+metaphors, and do not open several pages with the same sentence
+skeleton (e.g. "The card frames it from two sides..."). At most one
+em-dash per page. The test: it should read like the student explaining
+what they did to a classmate, not like an essay.
+
 ## Code snippets
 
 When documenting student code, prefer:
