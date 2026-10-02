@@ -56,8 +56,85 @@
 
             <p>The challenge was structural: drop the car from knee height and see if it comes apart. It survived &mdash; without the two riders up front.</p>
 
-            <p class="proj-pending">Still to add: the code behind the maneuvers.</p>
+            <p>The code below is the whole repertoire, and it is one idea applied ten ways: two wheels, one number each. Equal speeds drive straight, negative speeds drive backward, a difference between the two bends the path toward the slower wheel &mdash; the bigger the difference, the sharper the turn &mdash; and equal-and-opposite speeds spin the car on its own axis. The motors run paired, so every maneuver is a single <code>move_tank</code> call: two speeds and a time.</p>
         </div>
+
+        <div class="proj-code">
+            <h2 class="depth-label">Code:</h2>
+            <pre><code># Hardware setup: left drive motor on port A, right drive motor on port B.
+# The front ball wheel rolls freely.
+
+from hub import port
+import runloop
+import motor_pair
+
+# Each motion lasts 4 seconds (4000 milliseconds).
+ACTION_TIME_MS = 4000
+
+# Motor speeds are in degrees per second.
+FAST_SPEED = 700
+SLOW_SPEED = 250
+SPIN_SPEED = 400
+
+async def main():
+    # Pair the left and right drive motors.
+    motor_pair.pair(motor_pair.PAIR_1, port.A, port.B)
+
+    # 1. Drive forward fast.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, FAST_SPEED, FAST_SPEED, ACTION_TIME_MS
+    )
+
+    # 2. Drive forward slowly.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, SLOW_SPEED, SLOW_SPEED, ACTION_TIME_MS
+    )
+
+    # 3. Drive backward fast.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, -FAST_SPEED, -FAST_SPEED, ACTION_TIME_MS
+    )
+
+    # 4. Drive backward slowly.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, -SLOW_SPEED, -SLOW_SPEED, ACTION_TIME_MS
+    )
+
+    # 5. Make a small left arc: both wheels go forward; right is slightly faster.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, 300, 400, ACTION_TIME_MS
+    )
+
+    # 6. Make a medium left arc: both wheels go forward; right is much faster.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, 200, 500, ACTION_TIME_MS
+    )
+
+    # 7. Make a small right arc: both wheels go forward; left is slightly faster.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, 400, 300, ACTION_TIME_MS
+    )
+
+    # 8. Make a medium right arc: both wheels go forward; left is much faster.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, 500, 200, ACTION_TIME_MS
+    )
+
+    # 9. Spin clockwise: left wheel forward, right wheel backward.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, SPIN_SPEED, -SPIN_SPEED, ACTION_TIME_MS
+    )
+
+    # 10. Spin counterclockwise: left wheel backward, right wheel forward.
+    await motor_pair.move_tank_for_time(
+        motor_pair.PAIR_1, -SPIN_SPEED, SPIN_SPEED, ACTION_TIME_MS
+    )
+
+    # Free the motor ports when all motions are finished.
+    motor_pair.unpair(motor_pair.PAIR_1)
+
+# Start the program.
+runloop.run(main())</code></pre></div>
 
         <!-- The car running through the driving task -->
         <figure class="proj-figure">
