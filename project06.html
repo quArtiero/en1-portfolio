@@ -38,11 +38,11 @@
         </figure>
 
         <div class="proj-desc">
-            <p>The brief was to build a sturdy car out of as few pieces as possible, and it had to drive forward, backward, and spin. The card asks which connections are structurally sound, and what you can leave off to cut the part count.</p>
+            <p>Build a sturdy car with as few pieces as possible, and it has to drive forward, backward, and spin. The card asks which connections actually hold, and what you can leave off to cut the part count.</p>
 
-            <p>The driving task went well past just making it move: fast and slow forward, fast and slow backward, a small arc and a big arc, and a spin on the car's own axis, first slow and then fast.</p>
+            <p>The driving task was the full set: fast and slow forward, fast and slow backward, a small arc and a big arc, and spinning on its own axis slow and then fast.</p>
 
-            <p>There isn't much car beyond the kit itself. The hub is both chassis and body, the two motors mount straight onto its sides and carry the wheels on their own axles, and a ball caster under the nose is the third point on the ground. The cables wrap around the motor bodies so nothing trails. The spoiler at the back and the two riders up front are the only parts not doing structural work.</p>
+            <p>There's barely any car beyond the kit. The hub is chassis and body at the same time, the motors mount straight onto its sides with the wheels on their own axles, and a ball caster under the nose is the third point on the ground. The cables wrap around the motors so nothing trails. The spoiler and the two riders are the only parts not doing structural work.</p>
 
             <figure class="proj-figure">
                 <img src="./images/project06-02.jpg" alt="The car from above: the white hub is the whole body, its light matrix display lit, with a wheel close against each side, the black spoiler on white posts at the back, and the two minifigures seated on the front.">
@@ -54,9 +54,9 @@
                 <figcaption>From behind: wheels directly on the motors, cables coiled around them.</figcaption>
             </figure>
 
-            <p>The challenge was structural: drop the car from knee height and see if it comes apart. I took the two riders off first, and the car survived the fall in one piece.</p>
+            <p>The challenge was a drop test: knee height, does it come apart. I took the two riders off first and the car survived in one piece.</p>
 
-            <p>The code runs the whole set with the motors paired, so each maneuver is a single <code>move_tank</code> call: two wheel speeds and a time. Equal speeds drive straight, negative speeds drive backward, unequal speeds curve toward the slower wheel (the bigger the difference, the tighter the turn), and equal-and-opposite speeds spin the car in place.</p>
+            <p>The code runs everything with the motors paired, so each maneuver is one <code>move_tank</code> call: two wheel speeds and a time. Equal speeds go straight, negative goes backward, unequal curves toward the slower wheel (bigger difference, tighter turn), and opposite speeds spin it in place.</p>
         </div>
 
         <div class="proj-code">

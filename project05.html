@@ -38,9 +38,9 @@
         </figure>
 
         <div class="proj-desc">
-            <p>The brief was to draw with two motors. A pen rides at the end of a linked arm, each link turned by its own motor, and the shape it traces depends on how the two speeds relate. The card also asks which designs actually look good (simple, complex, or wild and crazy) and whether you can predict the drawing from the inputs.</p>
+            <p>This one draws. A pen rides on a linked arm, each link turned by its own motor, and the shape it traces depends on how the two speeds relate. The card also asks what actually looks good (simple, complex, or wild) and whether you can predict the drawing from the inputs.</p>
 
-            <p>I built the arm out of two beams that meet at a joint, both driven from the hub end. The marker is strapped to the far end with rubber bands so its own weight keeps it on the paper, and the paper is clipped flat to two baseplates underneath so the pen always has a fixed sheet to work on while the arm swings.</p>
+            <p>The arm is two beams meeting at a joint, both driven from the hub end. The marker is strapped on with rubber bands so its own weight keeps it on the paper, and the paper is clipped flat to two baseplates so the pen has a fixed sheet while the arm swings.</p>
 
             <figure class="proj-figure">
                 <img src="./images/project05-02.jpg" alt="The whole machine on a desk: two yellow baseplates with a sheet of lined paper clipped flat between them, a white marker held upright by rubber bands at the end of a light blue beam, and black beams running from the joint back to the white SPIKE Prime hub at the right.">
@@ -52,11 +52,11 @@
                 <figcaption>The joint, and the two drives back at the hub.</figcaption>
             </figure>
 
-            <p>I ran both motors continuously at 210 and 200 degrees per second, a ratio of 21:20. If the speeds matched exactly, the pen would retrace one loop forever. Being slightly off, every pass lands a little rotated from the one before, so the loops slowly work their way around the center. The two motors only come back into step after 21 turns of one and 20 of the other, which takes 36 seconds at those speeds; after that, the pen is drawing over the same path again.</p>
+            <p>I ran the motors at 210 and 200 degrees per second, 21:20. Matched speeds would just retrace one loop forever. Slightly off, each pass lands a little rotated from the last, so the loops crawl around the center. The motors come back into step after 21 turns of one and 20 of the other (36 seconds at those speeds), and after that the pen is redrawing the same path.</p>
 
-            <p>I let it draw for about 49 seconds; the video at the foot of the sheet is the whole run. That's one full cycle plus a bit of a second one, and you can see it on the sheet: the loops close into a ring, the middle is inked almost solid, and one small gap survives at the center where the pen never reached.</p>
+            <p>The run was about 49 seconds, the video at the bottom is the whole thing. One full cycle plus a bit, and you can see it on the sheet: the loops close into a ring, the middle is inked nearly solid, and there's one small gap in the center the pen never reached.</p>
 
-            <p>The card's challenge asks whether you can change the speed difference without touching the code. You can, with gear ratios: put a gear pair between one motor and its arm, and that arm turns at a new speed while the program keeps sending the same 210 and 200.</p>
+            <p>The challenge asks if you can change the speed difference without touching the code. You can, with gears. Put a gear pair between one motor and its arm and that arm runs at a new speed while the code still says 210 and 200.</p>
         </div>
 
         <div class="proj-code">
