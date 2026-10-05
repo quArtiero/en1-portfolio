@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Project 7: Draw a Square</title>
+    <link rel="icon" href="./images/icon-work.svg" type="image/svg+xml">
+
+    <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <link rel="stylesheet" href="./project.css">
+
+    <!-- Small fallback script: keeps the background depth in sync with scroll on older browsers -->
+    <script src="./site.js" defer></script>
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <p class="depth-label">04 M &mdash; Sheet 10 / 10</p>
+        <h1 class="proj-header">Project 7: Draw a Square</h1>
+        <p class="proj-deck">Attach a pen and draw a perfect square.</p>
+
+        <figure class="proj-img-container proj-figure">
+            <img src="./images/project07.jpg" alt="A square drawn in black marker on the laminated test placemat, sitting between the printed solid outer square and the dashed inner square, with a blob of ink at the starting corner.">
+            <figcaption>The square it drew, on the card's test placemat.</figcaption>
+        </figure>
+
+        <div class="proj-desc">
+            <p>The task: attach a pen to the robot and draw a perfect square. Straight sides, exact 90-degree corners, and you have to decide where the pen sits relative to the wheels and how to control the driving.</p>
+
+            <p>My answer to the straight sides was the gyro. The hub knows which way the robot is pointing, so instead of trusting the two wheels to run even, the code checks the heading every 10 milliseconds while driving and steers back toward the right direction. A wheel that starts late, a bit of slip, whatever's left over from the last corner, it all gets fixed on the move.</p>
+
+            <p>The corners come from the same sensor. Each side has a fixed target direction measured from the start (0, 90, 180, 270 degrees), so a sloppy corner can't leak into the next side. The turn spins fast through most of the corner, slows down for the last 15 degrees, and stops 1.5 degrees early because the robot keeps sliding a little after the wheels lock.</p>
+
+            <p>The program was written with Claude's help, and the code says so in its first lines. It also prints what it measures while it drives: how many centimeters each wheel rolled on every side, and how many wheel degrees each corner cost per degree the robot actually turned, which tells you if the wheels slipped.</p>
+
+            <figure class="proj-figure">
+                <img src="./images/project07-02.jpg" alt="The card's post-assessment filled in with black marker: all three performance boxes checked, finished within 4 cm of the start, and the angles marked spot on, close to 90 degrees.">
+                <figcaption>The post-assessment, filled in after the run.</figcaption>
+            </figure>
+
+            <p>The results are on the card's own checklist: the square stayed on the placemat, inside the big printed square and outside the dashed one. The robot finished within 4 cm of where it started, and the angles came out close enough to 90 that the card's top box ("spot on") is the one checked.</p>
+
+            <p class="proj-pending">Still to add: whether I ran the reliability challenge (tracing the same square more than once).</p>
+        </div>
+
+        <div class="proj-code">
+            <h2 class="depth-label">Code:</h2>
+            <pre><code># Draw a square with a SPIKE Prime robot.
+# Setup: left drive motor on port E, right drive motor on port A.
+# Generated with the assistance of Claude, on October 5, 2026.
+from hub import port, motion_sensor
+import runloop
+import motor_pair
+import motor
+
+# The hub measures angles in DECIdegrees (tenths of a degree): 900 = 90.0
+# degrees. On this hub, turning LEFT makes the reading go UP.
+
+SIDE_LENGTH_DEGREES = 240  # how long each side is (degrees of wheel rotation)
+FORWARD_SPEED = 180        # top driving speed (degrees per second)
+START_SPEED = 60           # speed at the very start and end of each side
+STEER_GAIN = 1.5           # how hard to steer back toward the right direction
+MAX_FIX = 50               # the most steering can change a wheel's speed
+WHEEL_DIAMETER_MM = 56     # first number printed on the tire (e.g. 56 x 14)
+
+FAST_TURN_SPEED = 100      # turning speed for most of the corner
+SLOW_TURN_SPEED = 50       # turning speed for the last few degrees
+SLOW_ZONE = 150            # start going slow 15 degrees before the target
+STOP_EARLY = 15            # stop 1.5 degrees early; the robot slides the rest
+
+DEBUG = True               # print what the robot measures (False = quiet)
+
+
+def log(*args):
+    if DEBUG:
+        print(*args)
+
+
+def error_to(target):
+    # How far the robot is from pointing at "target", in decidegrees.
+    # Positive = turned too far left, negative = not far enough.
+    # The hub's reading jumps from +180 to -180 degrees; the % undoes that.
+    reading = motion_sensor.tilt_angles()[0]
+    return (reading - target + 1800) % 3600 - 1800
+
+
+def wheels():
+    # How far each wheel has rolled FORWARD so far, in degrees: (left, right).
+    # The left motor is mounted mirrored, so its number is flipped.
+    return (-motor.relative_position(port.E), motor.relative_position(port.A))
+
+
+def cm(degrees):
+    # Turn wheel degrees into centimeters rolled.
+    return round(degrees * 3.1416 * WHEEL_DIAMETER_MM / 3600, 1)
+
+
+async def drive_straight(heading):
+    # Drive one side while the gyro keeps the robot pointing at "heading".
+    # Every 10 ms: if the robot points a little to the left, speed up the
+    # left wheel and slow down the right one (and the other way around).
+    # This fixes a wheel that starts late, a wheel that slips, and the small
+    # mistake left over from the last turn, all while the robot is moving.
+    left0, right0 = wheels()
+    while True:
+        left, right = wheels()
+        rolled = ((left - left0) + (right - right0)) / 2  # average of both wheels
+        remaining = SIDE_LENGTH_DEGREES - rolled
+        if remaining &lt;= 0:
+            break
+
+        # Start slow, speed up, and slow down again near the end of the side.
+        speed = min(FORWARD_SPEED, START_SPEED + 2 * rolled, START_SPEED + 2 * remaining)
+
+        # Steer: a positive error means the robot points too far left.
+        fix = error_to(heading) * STEER_GAIN
+        fix = max(-MAX_FIX, min(MAX_FIX, fix))
+        motor_pair.move_tank(motor_pair.PAIR_1, int(speed + fix), int(speed - fix))
+        await runloop.sleep_ms(10)
+
+    motor_pair.stop(motor_pair.PAIR_1, stop=motor.HOLD)
+    await runloop.sleep_ms(300)  # wait until the robot is completely still
+
+
+async def turn_left_to(target):
+    # 1. Spin left at normal speed for most of the corner.
+    motor_pair.move_tank(motor_pair.PAIR_1, -FAST_TURN_SPEED, FAST_TURN_SPEED)
+    while error_to(target) &lt; -SLOW_ZONE:
+        await runloop.sleep_ms(5)
+
+    # 2. Slow down for the last 15 degrees.
+    motor_pair.move_tank(motor_pair.PAIR_1, -SLOW_TURN_SPEED, SLOW_TURN_SPEED)
+    while error_to(target) &lt; -STOP_EARLY:
+        await runloop.sleep_ms(5)
+
+    # 3. Stop and lock the wheels in place. Whatever small mistake is left,
+    #    the next side fixes while driving.
+    motor_pair.stop(motor_pair.PAIR_1, stop=motor.HOLD)
+    await runloop.sleep_ms(300)
+
+
+async def main():
+    # If an earlier run was stopped before the end, the motors are still
+    # paired in the hub's memory. Unpair them first so pair() doesn't fail.
+    try:
+        motor_pair.unpair(motor_pair.PAIR_1)
+    except Exception:
+        pass
+    motor_pair.pair(motor_pair.PAIR_1, port.E, port.A)
+
+    # Let the robot sit still for a moment, then call its starting direction 0.
+    await runloop.sleep_ms(500)
+    motion_sensor.reset_yaw(0)
+    await runloop.sleep_ms(50)
+
+    # Side 1 points at 0, side 2 at 90, side 3 at 180 and side 4 at 270
+    # degrees to the left of the start. Every direction is measured from the
+    # START, so a mistake at one corner can't carry over to the next one.
+    for side in range(4):
+        heading = side * 900
+        log("side", side + 1)
+        log("  start: off by", error_to(heading))
+
+        left0, right0 = wheels()
+        await drive_straight(heading)
+        left1, right1 = wheels()
+        log("  wheels rolled: left", cm(left1 - left0), "cm, right", cm(right1 - right0), "cm")
+        log("  end:   off by", error_to(heading))
+
+        # Turn the corner. Normally the wheels turn about 2 degrees for every
+        # degree the robot turns; a lot more than that means they slipped.
+        target = heading + 900
+        before = error_to(target)
+        await turn_left_to(target)
+        left2, right2 = wheels()
+        robot_turned = (error_to(target) - before) / 10
+        wheel_turned = ((left1 - left2) + (right2 - right1)) / 2
+        if robot_turned > 0:
+            ratio = round(wheel_turned / robot_turned, 2)
+        else:
+            ratio = "?"
+        log("  turn: wheels", wheel_turned, "deg, robot", robot_turned, "deg,", ratio, "wheel deg per robot deg")
+
+    log("back to the start direction: off by", error_to(0))
+
+    # Free the motor ports when finished.
+    motor_pair.unpair(motor_pair.PAIR_1)
+
+runloop.run(main())</code></pre></div>
+
+        <!-- The robot drawing the square -->
+        <figure class="proj-figure">
+            <div class="proj-video-container is-vertical">
+                <iframe src="https://www.youtube.com/embed/66l4xeFC0-o" title="The LEGO robot drawing a square" allowfullscreen></iframe>
+            </div>
+            <figcaption>The robot drawing.</figcaption>
+        </figure>
+
+    </div>
+    <!-- End Project Information -->
+
+    <nav class="sheet-nav" aria-label="The other sheets">
+        <a class="sheet-prev" href="./project06.html"><span>&larr; Previous sheet</span>Project 6: Simple Car</a>
+    </nav>
+
+    <footer class="title-block">
+        <p class="depth-label">10 M &mdash; Bottom</p>
+        <dl class="title-grid">
+            <div><dt>Name</dt><dd>Pedro Quartiero</dd></div>
+            <div><dt>Course</dt><dd>Applications in Engineering &ndash; Simple Robotics</dd></div>
+            <div><dt>Term</dt><dd>Fall 2026</dd></div>
+            <div><dt>Sheet</dt><dd>10 of 10</dd></div>
+            <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
+        </dl>
+    </footer>
+
+</body>
+</html>
