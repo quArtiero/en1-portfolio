@@ -184,7 +184,7 @@ When the student asks to add a new activity or project:
    using the student's actual content, plus the two lines that make the
    page a sheet in the set:
 
-   - the kicker, `<p class="depth-label">04 M — Sheet NN / 10</p>`, where
+   - the kicker, `<p class="depth-label">04 M — Sheet NN / 11</p>`, where
      NN is the page's position in the home-page grid and the second number
      is how many sheets there are in total. Adding a page means bumping
      that total on every sheet, in both the kicker and the SHEET cell of

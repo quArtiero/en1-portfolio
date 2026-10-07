@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Project 8: Kamikaze Car</title>
+    <link rel="icon" href="./images/icon-work.svg" type="image/svg+xml">
+
+    <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <link rel="stylesheet" href="./project.css">
+
+    <!-- Small fallback script: keeps the background depth in sync with scroll on older browsers -->
+    <script src="./site.js" defer></script>
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <p class="depth-label">04 M &mdash; Sheet 11 / 11</p>
+        <h1 class="proj-header">Project 8: Kamikaze Car</h1>
+        <p class="proj-deck">Use an input method to control the motors.</p>
+
+        <figure class="proj-img-container proj-figure">
+            <img src="./images/project08.jpg" alt="The car from above: the white hub as the body with its display lit, a motor and light blue wheel on each side, the distance sensor mounted at the front facing forward, and the cables looped over the top.">
+            <figcaption>The car: hub for a body, distance sensor up front.</figcaption>
+        </figure>
+
+        <div class="proj-desc">
+            <p>The assignment was to use an input to control the motors. I used the distance sensor, and what came out is a kamikaze car.</p>
+
+            <p>It starts by spinning in place, scanning. The sensor sits at the front, facing forward between the two motors, and the moment something shows up in range the spin stops with the sensor pointed straight at it.</p>
+
+            <p>Then it charges. The code turns the distance into a "closeness" number and squares it, so the car starts off gentle and speeds up harder and harder as it gets near. There's a bit of the code that would brake close to the target. It's still there, just commented out. That's the kamikaze part: this car isn't supposed to stop.</p>
+        </div>
+
+        <div class="proj-code">
+            <h2 class="depth-label">Code:</h2>
+            <pre><code># Setup: left drive motor on port C, right drive motor on port D.
+# Distance Sensor on port A, facing forward between the motors.
+
+from hub import port
+import runloop
+import motor_pair
+import distance_sensor
+
+SPIN_SPEED = 200          # Motor speed in degrees per second.
+DETECTION_DISTANCE = 500  # 15 cm, in millimeters.
+STOP_DISTANCE = 0        # Stop when the object is about 2 cm away.
+START_SPEED = 200         # Forward speed when the object is first detected.
+MAX_SPEED = 800           # Fastest forward speed.
+
+async def main():
+    # Pair the drive motors.
+    motor_pair.pair(motor_pair.PAIR_1, port.D, port.C)
+
+    # Spin in place while looking for an object within 15 cm.
+    motor_pair.move_tank(motor_pair.PAIR_1, SPIN_SPEED, -SPIN_SPEED)
+    while True:
+        distance = distance_sensor.distance(port.A)
+        if distance != -1 and distance &lt;= DETECTION_DISTANCE:
+            break
+        await runloop.sleep_ms(10)
+
+    # Stop spinning while the sensor faces the detected object.
+    motor_pair.stop(motor_pair.PAIR_1)
+
+    # Drive toward the object, accelerating as the distance shrinks.
+    while True:
+        distance = distance_sensor.distance(port.A)
+
+        # Stop if the sensor loses the object or gets very close to it.
+        #if distance == -1 or distance &lt;= STOP_DISTANCE:
+            #break
+
+        # Squaring "closeness" makes the speed rise increasingly quickly.
+        closeness = DETECTION_DISTANCE - distance
+        forward_speed = START_SPEED + (closeness * closeness * 500 // 22500)
+        forward_speed = min(forward_speed, MAX_SPEED)
+
+        motor_pair.move(motor_pair.PAIR_1, 0, velocity=forward_speed)
+        await runloop.sleep_ms(10)
+
+    # Stop driving and free the motor ports.
+    motor_pair.stop(motor_pair.PAIR_1)
+    motor_pair.unpair(motor_pair.PAIR_1)
+
+runloop.run(main())</code></pre></div>
+
+    </div>
+    <!-- End Project Information -->
+
+    <nav class="sheet-nav" aria-label="The other sheets">
+        <a class="sheet-prev" href="./project07.html"><span>&larr; Previous sheet</span>Project 7: Draw a Square</a>
+    </nav>
+
+    <footer class="title-block">
+        <p class="depth-label">10 M &mdash; Bottom</p>
+        <dl class="title-grid">
+            <div><dt>Name</dt><dd>Pedro Quartiero</dd></div>
+            <div><dt>Course</dt><dd>Applications in Engineering &ndash; Simple Robotics</dd></div>
+            <div><dt>Term</dt><dd>Fall 2026</dd></div>
+            <div><dt>Sheet</dt><dd>11 of 11</dd></div>
+            <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
+        </dl>
+    </footer>
+
+</body>
+</html>
