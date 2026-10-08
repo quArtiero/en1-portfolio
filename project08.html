@@ -38,7 +38,7 @@
         </figure>
 
         <div class="proj-desc">
-            <p>The assignment was to use an input to control the motors. I used the distance sensor, and what came out is a kamikaze car.</p>
+            <p>The assignment was to use an input to control the motors. Parviz and I had fifteen minutes. We went with the distance sensor, and what came out is a kamikaze car.</p>
 
             <p>It starts by spinning in place, scanning. The sensor sits at the front, facing forward between the two motors, and the moment something shows up in range the spin stops with the sensor pointed straight at it.</p>
 
@@ -56,8 +56,8 @@ import motor_pair
 import distance_sensor
 
 SPIN_SPEED = 200          # Motor speed in degrees per second.
-DETECTION_DISTANCE = 500  # 15 cm, in millimeters.
-STOP_DISTANCE = 0        # Stop when the object is about 2 cm away.
+DETECTION_DISTANCE = 500  # 50 cm, in millimeters.
+STOP_DISTANCE = 0        # 0 mm: don't stop before contact.
 START_SPEED = 200         # Forward speed when the object is first detected.
 MAX_SPEED = 800           # Fastest forward speed.
 
@@ -65,7 +65,7 @@ async def main():
     # Pair the drive motors.
     motor_pair.pair(motor_pair.PAIR_1, port.D, port.C)
 
-    # Spin in place while looking for an object within 15 cm.
+    # Spin in place while looking for an object within 50 cm.
     motor_pair.move_tank(motor_pair.PAIR_1, SPIN_SPEED, -SPIN_SPEED)
     while True:
         distance = distance_sensor.distance(port.A)
