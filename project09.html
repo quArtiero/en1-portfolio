@@ -49,6 +49,8 @@
 
             <p>The hub is the body and the handle. A motor spins the socket through a gear train that runs up the neck, so one gloved hand can hold the tool and do the whole job.</p>
 
+            <p>The controls had to survive the gloves too, so there's nothing small to find or aim for. The trigger is the force sensor, used as one big press-and-hold switch: hold it and the socket spins at full speed, let go and it stops. And every release flips the direction, so the sequence is press to unscrew, carry the nut over, press again and it screws back on.</p>
+
             <figure class="proj-figure">
                 <img src="./images/project09-03.jpg" alt="The whole tool lying on the desk: the hub with its cable wrapped around it, the motor at one end, the gear train in the middle, and the pink neck out to the socket head.">
                 <figcaption>The whole tool: motor, gear train, neck, socket.</figcaption>
@@ -58,6 +60,43 @@
 
             <p class="proj-pending">Still to add: how the runs went &mdash; both hands, the three orientations, whether the nut ever dropped, and how fast the transfer was.</p>
         </div>
+
+        <div class="proj-code">
+            <h2 class="depth-label">Code:</h2>
+            <pre><code># Setup: Medium motor on port A, Force Sensor on port D.
+from hub import port
+import runloop
+import motor
+import force_sensor
+
+# Maximum speed for a Medium motor, in degrees per second.
+SPEED = 1110
+
+# Minimum force needed to count as a press, in decinewtons.
+PRESS_FORCE = 5
+
+async def main():
+    # The first press unscrews. Change -1 to 1 if it turns the wrong way.
+    direction = -1
+
+    # Keep running until you stop the program in the SPIKE App.
+    while True:
+        # Wait for force on the sensor.
+        while force_sensor.force(port.D) &lt; PRESS_FORCE:
+            await runloop.sleep_ms(10)
+
+        # Start the motor once for this press.
+        motor.run(port.A, direction * SPEED)
+
+        # Keep running while force is applied.
+        while force_sensor.force(port.D) >= PRESS_FORCE:
+            await runloop.sleep_ms(10)
+
+        # Stop when released, then reverse for the next press.
+        motor.stop(port.A)
+        direction = -direction
+
+runloop.run(main())</code></pre></div>
 
         <!-- The tool doing the bolt-to-bolt transfer -->
         <figure class="proj-figure">
