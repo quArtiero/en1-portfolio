@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Project 9: Astronaut Tools</title>
+    <link rel="icon" href="./images/icon-work.svg" type="image/svg+xml">
+
+    <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <link rel="stylesheet" href="./project.css">
+
+    <!-- Small fallback script: keeps the background depth in sync with scroll on older browsers -->
+    <script src="./site.js" defer></script>
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <p class="depth-label">04 M &mdash; Sheet 12 / 12</p>
+        <h1 class="proj-header">Project 9: Astronaut Tools</h1>
+        <p class="proj-deck">Create a tool for helping an astronaut perform a task during an EVA.</p>
+
+        <figure class="proj-img-container proj-figure">
+            <img src="./images/project09.jpg" alt="The tool held upright in a bulky black winter glove: the hub as the body at the bottom, a gear train leading up a pink column, and the square socket head at the top. The wood block with the two bolts sits behind it.">
+            <figcaption>The tool, held with the winter glove on.</figcaption>
+        </figure>
+
+        <div class="proj-desc">
+            <p>The assignment was to build a tool for an astronaut on a spacewalk. The job it has to do: unscrew a nut from one bolt, carry it over to another bolt, and screw it back on, without ever letting go of the nut, because in zero-G a loose nut floats away. And it has to work with space gloves on, one-handed, with either hand.</p>
+
+            <figure class="proj-figure">
+                <img src="./images/project09-02.jpg" alt="The head of the tool up close, held in a winter glove: a square opening framed in yellow and gray beams, lined on the inside with black rubber pieces that grip the nut.">
+                <figcaption>The head: a square socket lined with rubber.</figcaption>
+            </figure>
+
+            <p>The answer is in the head. It's a square socket lined with rubber pieces on the inside, so pushing it over the nut grips it. The nut turns with the socket and can't slip out, whichever way the tool is pointing.</p>
+
+            <p>The hub is the body and the handle. A motor spins the socket through a gear train that runs up the neck, so one gloved hand can hold the tool and do the whole job.</p>
+
+            <figure class="proj-figure">
+                <img src="./images/project09-03.jpg" alt="The whole tool lying on the desk: the hub with its cable wrapped around it, the motor at one end, the gear train in the middle, and the pink neck out to the socket head.">
+                <figcaption>The whole tool: motor, gear train, neck, socket.</figcaption>
+            </figure>
+
+            <p>The gloves in the photos are part of the assignment: everything gets tested in bulky winter gloves to simulate the real ones.</p>
+
+            <p class="proj-pending">Still to add: how the runs went &mdash; both hands, the three orientations, whether the nut ever dropped, and how fast the transfer was.</p>
+        </div>
+
+        <!-- The tool doing the bolt-to-bolt transfer -->
+        <figure class="proj-figure">
+            <div class="proj-video-container">
+                <iframe src="https://www.youtube.com/embed/DM7y__4URjM" title="The astronaut tool moving the nut between bolts" allowfullscreen></iframe>
+            </div>
+            <figcaption>The tool at work.</figcaption>
+        </figure>
+
+    </div>
+    <!-- End Project Information -->
+
+    <nav class="sheet-nav" aria-label="The other sheets">
+        <a class="sheet-prev" href="./project08.html"><span>&larr; Previous sheet</span>Project 8: Kamikaze Car</a>
+    </nav>
+
+    <footer class="title-block">
+        <p class="depth-label">10 M &mdash; Bottom</p>
+        <dl class="title-grid">
+            <div><dt>Name</dt><dd>Pedro Quartiero</dd></div>
+            <div><dt>Course</dt><dd>Applications in Engineering &ndash; Simple Robotics</dd></div>
+            <div><dt>Term</dt><dd>Fall 2026</dd></div>
+            <div><dt>Sheet</dt><dd>12 of 12</dd></div>
+            <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
+        </dl>
+    </footer>
+
+</body>
+</html>
