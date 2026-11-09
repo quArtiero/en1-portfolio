@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Project 14: 1D Color Search</title>
+    <link rel="icon" href="./images/icon-work.svg" type="image/svg+xml">
+
+    <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <link rel="stylesheet" href="./project.css">
+
+    <!-- Small fallback script: keeps the background depth in sync with scroll on older browsers -->
+    <script src="./site.js" defer></script>
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <p class="depth-label">04 M &mdash; Sheet 18 / 18</p>
+        <h1 class="proj-header">Project 14: 1D Color Search</h1>
+        <p class="proj-deck">Use Q-learning to find the goal brick while avoiding the boundaries.</p>
+
+        <figure class="proj-img-container proj-figure">
+            <img src="./images/project14.jpg" alt="The rig from above: a motor turning a long black beam with the color sensor at its tip, sitting over a green brick, the other bricks of the track spaced in an arc around it, and the hub beside.">
+            <figcaption>The arm and the track, sensor over the goal.</figcaption>
+        </figure>
+
+        <div class="proj-desc">
+            <p>A ten-minute class project on reinforcement learning. The brief: with Q-learning, get a robot to learn its way to a goal brick (green) while avoiding the boundary bricks (black) at the two ends of the track.</p>
+
+            <p>The program came ready from the course, written by Tanushree Burman at the Tufts CEEO, with a live web dashboard from Dr. E. My half was physical: the arm with the color sensor on its tip, the motor it pivots on, and a track of bricks spaced in an arc, black, yellow, red, green, magenta, blue, black. Then checking the setup with the course's read_color helper, and training it.</p>
+
+            <p>The learning is a table of scores. The state is the color under the sensor, the actions are sweep left or sweep right, and the rewards are +10 for the goal, -10 for a boundary, -1 for any other move, so shorter paths win. The table starts empty and grows a row every time the robot discovers a color it hasn't seen, and each move updates one score.</p>
+
+            <figure class="proj-figure">
+                <img src="./images/project14-02.jpg" alt="A laptop screen with the course's dashboard: the track drawn as an arc of bricks with arrows pointing toward the green goal, a Q-table with four rows where yellow and red point right and magenta and blue point left, and the last run reading Blue to Magenta to Green, goal, total +9, after 24 training episodes.">
+                <figcaption>The dashboard after 24 episodes: every color pointing toward the goal.</figcaption>
+            </figure>
+
+            <p>After 24 training episodes the table had the track figured out. Yellow and red point right, magenta and blue point left, everything toward the green in the middle. The dashboard caught a run that started on blue, went to magenta, then landed on green: goal in two moves, total reward +9.</p>
+
+            <p>The code below is the agent from the course's program, the part that does the learning. Everything it knows lives in the table self.q, and the whole of Q-learning is the one update line inside learn().</p>
+        </div>
+
+        <div class="proj-code">
+            <h2 class="depth-label">Code (the agent, from the course's program):</h2>
+            <pre><code># ---- Rewards: how good or bad each outcome is ----
+REWARD_GOAL = 10        # landed on the goal brick (the episode ends)
+REWARD_BOUNDARY = -10   # landed on a boundary brick (the episode ends)
+REWARD_STEP = -1        # any other move: a small cost, so shorter paths win
+
+class QAgent:
+    def __init__(self, num_states, num_actions, alpha, gamma):
+        self.alpha = alpha
+        self.gamma = gamma
+        self.num_actions = num_actions
+        # The Q-table: one row per state, one column per action.
+        # Everything starts at 0 because the agent knows nothing yet.
+        self.q = [[0.0] * num_actions for _ in range(num_states)]
+
+    def add_state(self):
+        """Add a row of zeros for a state the agent has just discovered."""
+        self.q.append([0.0] * self.num_actions)
+
+    def best_action(self, state):
+        """The action with the highest Q-value in this state.
+        If several actions tie for best, pick one of them at random."""
+        row = self.q[state]
+        best = max(row)
+        ties = [a for a in range(len(row)) if row[a] == best]
+        return random.choice(ties)
+
+    def choose_action(self, state, epsilon):
+        """Epsilon-greedy: usually EXPLOIT (pick the best known action),
+        but with probability epsilon EXPLORE (pick a random action).
+        Returns (action, explored)."""
+        if random.random() &lt; epsilon:
+            return random.randint(0, len(self.q[state]) - 1), True
+        return self.best_action(state), False
+
+    def learn(self, state, action, reward, next_state, done):
+        """The Q-learning update rule:
+
+            new Q = old Q + alpha * (reward + gamma * best_next - old Q)
+
+        best_next is the best Q-value in the state we landed in: how good
+        things look from here on. If the episode is over there is no future,
+        so best_next is 0. Returns (old Q, best_next, new Q)."""
+        old = self.q[state][action]
+        if done:
+            best_next = 0.0
+        else:
+            best_next = max(self.q[next_state])
+        target = reward + self.gamma * best_next
+        new = old + self.alpha * (target - old)
+        self.q[state][action] = new
+        return old, best_next, new</code></pre></div>
+
+    </div>
+    <!-- End Project Information -->
+
+    <nav class="sheet-nav" aria-label="The other sheets">
+        <a class="sheet-prev" href="./project13.html"><span>&larr; Previous sheet</span>Project 13: Fruit Scanner</a>
+    </nav>
+
+    <footer class="title-block">
+        <p class="depth-label">10 M &mdash; Bottom</p>
+        <dl class="title-grid">
+            <div><dt>Name</dt><dd>Pedro Quartiero</dd></div>
+            <div><dt>Course</dt><dd>Applications in Engineering &ndash; Simple Robotics</dd></div>
+            <div><dt>Term</dt><dd>Fall 2026</dd></div>
+            <div><dt>Sheet</dt><dd>18 of 18</dd></div>
+            <div><dt>Links</dt><dd><a href="https://www.linkedin.com/in/pedro-quartiero/" target="_blank" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/quArtiero" target="_blank" rel="noopener">GitHub</a></dd></div>
+        </dl>
+    </footer>
+
+</body>
+</html>
