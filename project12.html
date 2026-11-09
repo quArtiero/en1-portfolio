@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Project 12: Fruit Scanner</title>
+    <title>Project 12: High or Low</title>
     <link rel="icon" href="./images/icon-work.svg" type="image/svg+xml">
 
     <!-- Fonts: Fraunces (headings), Hanken Grotesk (body), JetBrains Mono (labels) -->
@@ -29,299 +29,202 @@
     <div class="proj-container">
 
         <p class="depth-label">04 M &mdash; Sheet 16 / 17</p>
-        <h1 class="proj-header">Project 12: Fruit Scanner</h1>
-        <p class="proj-deck">Tell apples from bananas with a neural network on the hub.</p>
+        <h1 class="proj-header">Project 12: High or Low</h1>
+        <p class="proj-deck">Create a supervised classification device that can tell "high" from "low" heights.</p>
 
         <figure class="proj-img-container proj-figure">
-            <img src="./images/project12.jpg" alt="The scanner on the desk: the hub standing upright in a pink frame, the small motor up top with a black arm reaching over the teal turntable, the color sensor pointing down at it, and the red and yellow LEGO brick stacks waiting beside the rig, with the code editor open on the laptop behind.">
-            <figcaption>The scanner, with the two test subjects waiting.</figcaption>
+            <img src="./images/project12.jpg" alt="The device from above: two yellow sticky-note dials on top, the left marked K with 3, 5, 7 and 9 written around a knob, the right marked Short and Tall with a white arrow between them, and the hub with its buttons in the middle.">
+            <figcaption>The paper interface: the K dial on one motor, the answer arrow on the other.</figcaption>
         </figure>
 
         <div class="proj-desc">
-            <p>This project is a fruit scanner: put something on the base and it tells you whether it's an apple or a banana. A force sensor notices the weight, a color sensor reads the RGB, and a small neural network running on the hub itself makes the call. B on the display and a high beep for banana, A and a low beep for apple.</p>
+            <p>The machine-learning project: build a supervised classification device that can tell "high" from "low" heights. Mine measures with the distance sensor and classifies with K-Nearest-Neighbors, which is the slide's extension question, and the part I added is that K lives on a physical knob.</p>
 
-            <p>When the network isn't sure (confidence under 80%), the base spins very slowly under the sensor and the answer comes from the average of a dozen readings instead of three. Every analysis gets appended to a CSV file on the hub, because it turns out the SPIKE has a file system, so the data survives between runs.</p>
+            <p>Training is teaching it by hand. The display shows S, you hold something at a short height and press the left button, five times. Then T, and five tall examples. Ten in total, which is exactly enough for even K equals 9 to have neighbors to vote.</p>
 
             <figure class="proj-figure">
-                <img src="./images/project12-02.jpg" alt="The rig from above: the pink frame, the small motor, the black beams of the arm, the cable running to the color sensor, and the red and yellow brick stacks on the desk next to it.">
-                <figcaption>From above: motor, arm, sensor, and the two stand-in fruits.</figcaption>
+                <img src="./images/project12-02.jpg" alt="The device held in one hand: the hub in the middle with a blue motor on each side, the K dial and the Short/Tall arrow dial on their axles on top.">
+                <figcaption>In the hand: the hub in the middle, a motor under each dial.</figcaption>
             </figure>
 
-            <p>The network is tiny, three inputs, four hidden neurons, one output, and it trains itself on the hub: the first run shows a T for a few seconds, saves the weights to a file, and every run after that just loads them. The inputs aren't raw RGB. Each channel is divided by the sum of the three, so the network sees color instead of brightness, and a banana close to the sensor reads the same as a banana far from it.</p>
+            <p>The interface is two motors, and neither of them drives anything. The one on E is the K knob: a paper dial with an arrow on the axle, 45 degrees per step, pointing at 1, 3, 5, 7 or 9, and the program just reads the motor's angle to know which K you picked. The one on D is the answer: its arrow swings left for short, right for tall, and back to the middle when the program stops. Both dials are sticky notes.</p>
 
-            <p>The first version was trained on pure red and pure yellow, and the field test took it apart. The test objects were red and yellow LEGO bricks standing in for the fruit, and the red ones kept coming out wrong or sending the base spinning. The log on the hub showed why. A real red object isn't pure red: the sensor read one as (611, 181, 240), with even more blue than green, and what actually separates red from yellow is the green share, about 0.17 against 0.33. The log also showed dark readings, intensity under 100, where the sensor was just seeing the background, and several of those had come out as "banana".</p>
+            <p>To decide, it measures the gap from the new reading to every saved example, sorts them, and lets the K closest vote. Majority wins, and K is always odd so two labels can't tie. There's no rule like "under 100 mm means short" anywhere in the program. Everything it knows is the ten examples.</p>
 
-            <p>Version two trains on the colors the sensor actually measured, pulled from that log, with the pure colors kept in at a much lower weight. Readings darker than the cutoff get ignored, and if nothing bright shows up even while spinning, the display shows X and it refuses to guess. Re-running the logged red-brick readings through the new network, on the computer, every one came out apple with over 99% confidence.</p>
+            <p>Each reading averages five sensor samples, a reading that sees nothing doesn't get classified, and every decision prints to the console with its vote count.</p>
 
-            <p>The program was written with Claude's help, and its header says so, the way the syllabus asks.</p>
+            <p>The program was written with Claude's help, and its header says so.</p>
 
-            <p class="proj-pending">Still to add: how version two did back on the hub.</p>
+            <p class="proj-pending">Still to add: how it did live, and whether turning the knob flips a borderline answer.</p>
         </div>
 
         <div class="proj-code">
             <h2 class="depth-label">Code:</h2>
-            <pre><code># EN1 - Classificador de frutas (maca vs banana) com rede neural no SPIKE Prime
-# Generated with the assistance of Claude (Anthropic), on 2026-11-06
+            <pre><code># EN1 - KNN classifier: SHORT vs TALL heights (LEGO SPIKE Prime)
+# Generated with the assistance of Claude (Anthropic), on Nov 2, 2026
 #
-# Portas:
-#   F = motor pequeno (gira a base)
-#   D = sensor de forca (detecta quando algo e colocado na base)
-#   E = sensor de cor (le o RGB)
+# Ports:
+#   F = Distance Sensor
+#   E = "K knob" motor  (you turn it by hand, arrow points at 1/3/5/7/9)
+#   D = "answer" motor  (arrow swings LEFT = short, RIGHT = tall)
+#
+# BEFORE you press play:
+#   - Point the K-knob arrow (E) at "1".
+#   - Point the answer arrow (D) straight UP (the middle).
+#   The program treats those starting positions as zero.
+#
+# How to use:
+#   1. Matrix shows "S": put something at a SHORT height, press LEFT button.
+#      Repeat until it has SAMPLES_PER_CLASS short examples.
+#   2. Matrix shows "T": same thing at a TALL height.
+#   3. Now it classifies live. Turn the knob on E to change K
+#      (the matrix shows the current K). Arrow D points to the answer.
+#      Press RIGHT button to stop.
 
-from hub import port, light_matrix, sound
-import motor, force_sensor, color_sensor
-import time, math, random
+from hub import light_matrix, button, port, sound
+import distance_sensor
+import motor
+import runloop
 
-try:
-    import os
-except ImportError:
-    import uos as os
+SENSOR = port.F
+K_KNOB = port.E
+ANSWER = port.D
 
-# ---------------- CONFIGURACAO ----------------
-PORTA_MOTOR = port.F
-PORTA_FORCA = port.D
-PORTA_COR = port.E
+SAMPLES_PER_CLASS = 5   # 5 short + 5 tall = 10 examples, so K=9 still works
+K_VALUES = [1, 3, 5, 7, 9]
+DEGREES_PER_STEP = 45   # turn the knob 45 degrees to go to the next K
 
-ARQ_PESOS = 'nn_pesos_v2.txt'   # pesos da rede (nome novo -> treina de novo 1 vez sozinho)
-ARQ_LOG = 'frutas_log.csv'      # toda analise vai pra ca
-RETREINAR = False               # True = ignora os pesos salvos e treina de novo
+ARROW_ANGLE = 90        # how far the answer arrow swings from the middle
+FLIP = 1                # if the arrow goes the wrong way, change this to -1
 
-LIMIAR_FORCA = 1        # qualquer coisa acima da base vazia (1 = 0,1 N, o menor passo do sensor)
-CONF_MIN = 0.80         # confianca abaixo disso = "dificil" -> gira a base
-N_LEITURAS_PARADO = 3   # leituras rapidas com a base parada
-N_LEITURAS_GIRO = 12    # leituras com a base girando devagar
-VEL_GIRO = 40           # graus/segundo (bem devagar)
-INTERVALO_MS = 150      # tempo entre leituras
-I_MIN = 100             # leitura com intensidade (i) abaixo disso = escura demais, ignora
-
-N_ENT = 3   # entradas da rede: r, g, b normalizados
-N_OCU = 4   # neuronios na camada escondida
-
-
-# ---------------- ARQUIVOS ----------------
-def existe(nome):
-    try:
-        os.stat(nome)
-        return True
-    except OSError:
-        return False
+data = []  # training set: list of (distance_mm, label)
 
 
-def registrar(linha):
-    novo = not existe(ARQ_LOG)
-    with open(ARQ_LOG, 'a') as f:
-        if novo:
-            f.write('t_ms,r,g,b,i,p_banana,fruta,modo,n_leituras\n')
-        f.write(linha + '\n')
+async def read_distance():
+    # Average 5 readings to reduce noise. Returns -1 if nothing is seen.
+    total = 0
+    count = 0
+    for i in range(5):
+        d = distance_sensor.distance(SENSOR)
+        if d != -1:
+            total += d
+            count += 1
+        await runloop.sleep_ms(40)
+    if count == 0:
+        return -1
+    return total // count
 
 
-def salvar_pesos(pesos):
-    W1, b1, W2, b2 = pesos
-    nums = [v for linha in W1 for v in linha] + b1 + W2 + [b2]
-    with open(ARQ_PESOS, 'w') as f:
-        f.write(','.join([str(v) for v in nums]))
+def read_k():
+    # How far has the knob been turned since the start?
+    # abs() means you can turn it either direction.
+    angle = abs(motor.relative_position(K_KNOB))
+    step = round(angle / DEGREES_PER_STEP)
+    if step > len(K_VALUES) - 1:
+        step = len(K_VALUES) - 1
+    return K_VALUES[step]
 
 
-def carregar_pesos():
-    with open(ARQ_PESOS) as f:
-        nums = [float(s) for s in f.read().split(',')]
-    W1 = [nums[j * N_ENT:(j + 1) * N_ENT] for j in range(N_OCU)]
-    i = N_ENT * N_OCU
-    b1 = nums[i:i + N_OCU]
-    i += N_OCU
-    W2 = nums[i:i + N_OCU]
-    i += N_OCU
-    b2 = nums[i]
-    return W1, b1, W2, b2
-
-
-# ---------------- REDE NEURAL ----------------
-def sigmoid(z):
-    if z &lt; -30:
-        return 0.0
-    if z > 30:
-        return 1.0
-    return 1 / (1 + math.exp(-z))
-
-
-def tanh(z):
-    if z > 15:
-        return 1.0
-    if z &lt; -15:
-        return -1.0
-    e = math.exp(2 * z)
-    return (e - 1) / (e + 1)
-
-
-def aleatorio():
-    # numero entre -1 e 1
-    return (random.randint(0, 2000) - 1000) / 1000
-
-
-def normalizar(r, g, b):
-    # divide pela soma -> so a "cor", nao o brilho
-    s = r + g + b
-    if s == 0:
-        return [0.0, 0.0, 0.0]
-    return [r / s, g / s, b / s]
-
-
-def frente(x, pesos):
-    W1, b1, W2, b2 = pesos
-    h = []
-    for j in range(N_OCU):
-        z = b1[j]
-        for k in range(N_ENT):
-            z += W1[j][k] * x[k]
-        h.append(tanh(z))
-    z = b2
-    for j in range(N_OCU):
-        z += W2[j] * h[j]
-    return h, sigmoid(z)   # saida = probabilidade de ser banana
-
-
-def gerar_dados():
-    # Cores "tipicas" medidas pelo SEU sensor (tiradas do frutas_log.csv),
-    # ja normalizadas (r', g', b'):
-    #   amarelo -> g' alto (~0.33)   |   vermelho -> g' baixo (~0.17), b' parecido com g'
-    # + as cores puras do comeco, pra rede nao estranhar extremos
-    base = [
-        ((0.44, 0.33, 0.23), 1),   # amarelo real (banana)
-        ((0.59, 0.175, 0.235), 0), # vermelho real (maca)
-        ((0.50, 0.50, 0.00), 1),   # amarelo puro
-        ((1.00, 0.00, 0.00), 0),   # vermelho puro
-    ]
-    dados = []
-    for (r, g, b), y in base:
-        n = 25 if b > 0 else 5     # mais peso pras cores reais
-        for _ in range(n):
-            rr = max(0.0, r + random.randint(-30, 30) / 1000)
-            gg = max(0.0, g + random.randint(-30, 30) / 1000)
-            bb = max(0.0, b + random.randint(-30, 30) / 1000)
-            s = rr + gg + bb
-            dados.append(([rr / s, gg / s, bb / s], y))
-    return dados
-
-
-def treinar(dados, epocas=200, lr=0.5):
-    W1 = [[aleatorio() for k in range(N_ENT)] for j in range(N_OCU)]
-    b1 = [0.0] * N_OCU
-    W2 = [aleatorio() for j in range(N_OCU)]
-    b2 = 0.0
-    for ep in range(epocas):
-        for x, y in dados:
-            h, p = frente(x, (W1, b1, W2, b2))
-            d2 = p - y                      # erro na saida
-            for j in range(N_OCU):
-                d1 = d2 * W2[j] * (1 - h[j] * h[j])   # erro no neuronio escondido j
-                W2[j] -= lr * d2 * h[j]
-                for k in range(N_ENT):
-                    W1[j][k] -= lr * d1 * x[k]
-                b1[j] -= lr * d1
-            b2 -= lr * d2
-    return W1, b1, W2, b2
-
-
-# ---------------- SENSORES ----------------
-def media_leituras(n, girando):
-    # So conta leituras claras o bastante (i >= I_MIN).
-    # Leitura escura = sensor vendo o fundo/longe do objeto -> e so ruido.
-    soma = [0, 0, 0, 0]
-    validas = 0
-    if girando:
-        motor.run(PORTA_MOTOR, VEL_GIRO)
-    for _ in range(n):
-        leitura = color_sensor.rgbi(PORTA_COR)
-        if leitura[3] >= I_MIN:
-            for k in range(4):
-                soma[k] += leitura[k]
-            validas += 1
-        time.sleep_ms(INTERVALO_MS)
-    if girando:
-        motor.stop(PORTA_MOTOR)
-    if validas == 0:
-        return None, 0
-    return [s / validas for s in soma], validas
-
-
-def prob_banana(rgbi, pesos):
-    _, p = frente(normalizar(rgbi[0], rgbi[1], rgbi[2]), pesos)
-    return p
-
-
-def tem_algo(base_vazia):
-    return force_sensor.force(PORTA_FORCA) >= base_vazia + LIMIAR_FORCA
-
-
-# ---------------- PROGRAMA ----------------
-def main():
-    # 1) Pesos: carrega do arquivo ou treina uma vez e salva
-    if existe(ARQ_PESOS) and not RETREINAR:
-        pesos = carregar_pesos()
-        print('Pesos carregados de', ARQ_PESOS)
+async def point_answer(label):
+    if label == "S":
+        target = -ARROW_ANGLE * FLIP
+    elif label == "T":
+        target = ARROW_ANGLE * FLIP
     else:
-        light_matrix.write('T')
-        print('Treinando...')
-        pesos = treinar(gerar_dados())
-        salvar_pesos(pesos)
-        print('Treinado e salvo em', ARQ_PESOS)
+        target = 0
+    await motor.run_to_relative_position(ANSWER, target, 300)
 
-    # 2) Mede a forca com a base vazia (referencia)
-    time.sleep_ms(500)
-    base_vazia = force_sensor.force(PORTA_FORCA)
-    print('Pronto. Forca com base vazia:', base_vazia)
-    light_matrix.write('?')
 
-    while True:
-        # 3) Espera algo ser colocado (so olha a forca, sem rede neural)
-        while not tem_algo(base_vazia):
-            time.sleep_ms(100)
-        time.sleep_ms(400)   # deixa a fruta assentar
+async def wait_for_left_press():
+    while not button.pressed(button.LEFT):
+        await runloop.sleep_ms(20)
+    while button.pressed(button.LEFT):   # wait for release
+        await runloop.sleep_ms(20)
 
-        # 4) Leitura rapida com a base parada
-        rgbi, n = media_leituras(N_LEITURAS_PARADO, False)
-        modo = 'parado'
-        p = prob_banana(rgbi, pesos) if rgbi else 0.5
 
-        # 5) Se ficou escuro ou em duvida, gira devagar e tira a media
-        if rgbi is None or max(p, 1 - p) &lt; CONF_MIN:
-            rgbi2, n2 = media_leituras(N_LEITURAS_GIRO, True)
-            if rgbi2:
-                rgbi, n = rgbi2, n2
-                p = prob_banana(rgbi, pesos)
-                modo = 'girando'
+async def collect(label):
+    n = 0
+    while n &lt; SAMPLES_PER_CLASS:
+        light_matrix.write(label)
+        await wait_for_left_press()
+        d = await read_distance()
+        if d == -1:
+            print("Nothing detected - try again")
+            await sound.beep(200, 300, 80)
+            continue
+        data.append((d, label))
+        n += 1
+        print("Saved", label, "sample", n, ":", d, "mm")
+        await sound.beep(880, 120, 80)
 
-        if rgbi is None:
-            # nenhuma leitura clara nem girando -> nao chuta
-            fruta = 'nada'
-            p = -1
-            rgbi = [0, 0, 0, 0]
-            light_matrix.write('X')
-            sound.beep(200, 400, 100)
+
+def classify(x, k):
+    # 1) gap from the new reading to every training example
+    neighbors = []
+    for (d, label) in data:
+        neighbors.append((abs(x - d), label))
+    # 2) sort: closest examples first
+    neighbors.sort()
+    # 3) the k closest examples vote
+    votes_short = 0
+    votes_tall = 0
+    for (gap, label) in neighbors[:k]:
+        if label == "S":
+            votes_short += 1
         else:
-            fruta = 'banana' if p >= 0.5 else 'maca'
-            light_matrix.write('B' if fruta == 'banana' else 'A')
-            sound.beep(880 if fruta == 'banana' else 440, 200, 100)
-
-        linha = '%d,%d,%d,%d,%d,%.3f,%s,%s,%d' % (
-            time.ticks_ms(), rgbi[0], rgbi[1], rgbi[2], rgbi[3], p, fruta, modo, n)
-        registrar(linha)
-        print(linha)
-
-        # 6) Espera tirarem a fruta antes de analisar a proxima
-        while tem_algo(base_vazia):
-            time.sleep_ms(100)
-        light_matrix.write('?')
+            votes_tall += 1
+    if votes_short > votes_tall:
+        return "S", votes_short, votes_tall
+    return "T", votes_short, votes_tall
 
 
-main()</code></pre></div>
+async def main():
+    # The arrows' starting positions become "zero"
+    motor.reset_relative_position(K_KNOB, 0)
+    motor.reset_relative_position(ANSWER, 0)
 
-        <!-- The scanner classifying -->
+    # ---- TRAINING ----
+    await collect("S")
+    await collect("T")
+    print("Training data:", data)
+    await sound.beep(660, 150, 80)
+    await sound.beep(990, 150, 80)
+
+    # ---- CLASSIFYING ----
+    current = None   # what the answer arrow is pointing at right now
+    while not button.pressed(button.RIGHT):
+        k = read_k()
+        light_matrix.write(str(k))
+
+        x = await read_distance()
+        if x == -1:
+            guess = None
+            print("Nothing detected")
+        else:
+            guess, vs, vt = classify(x, k)
+            print(x, "mm | K =", k, "| votes short:", vs, "tall:", vt,
+                  "->", "SHORT" if guess == "S" else "TALL")
+
+        # only move the arrow when the answer changes
+        if guess != current:
+            await point_answer(guess)
+            current = guess
+
+        await runloop.sleep_ms(150)
+
+    await point_answer(None)   # arrow back to the middle
+    light_matrix.write("X")
+    print("Stopped.")
+
+
+runloop.run(main())</code></pre></div>
+
+        <!-- The classifier running -->
         <figure class="proj-figure">
             <div class="proj-video-container is-vertical">
-                <iframe src="https://www.youtube.com/embed/0FndCeqsLI0" title="The fruit scanner classifying" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/vi5D13kn9Jo" title="The KNN height classifier running" allowfullscreen></iframe>
             </div>
-            <figcaption>The scanner at work.</figcaption>
+            <figcaption>The classifier running.</figcaption>
         </figure>
 
     </div>
@@ -329,7 +232,7 @@ main()</code></pre></div>
 
     <nav class="sheet-nav" aria-label="The other sheets">
         <a class="sheet-prev" href="./project11.html"><span>&larr; Previous sheet</span>Project 11: Haunted House</a>
-        <a class="sheet-next" href="./project13.html"><span>Next sheet &rarr;</span>Project 13: High or Low</a>
+        <a class="sheet-next" href="./project13.html"><span>Next sheet &rarr;</span>Project 13: Fruit Scanner</a>
     </nav>
 
     <footer class="title-block">
